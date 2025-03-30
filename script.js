@@ -18,14 +18,14 @@ let savedImages = [];
 // Preload images
 images.forEach((path, i) => {
     savedImages[i] = new Image();
-    savedImages[i].src = "flags/" + path + ".png";
+    savedImages[i].src = "newfolder/" + path + ".png";
 });
 
     
 
 images.forEach((src) => {
     const img = new Image();
-    img.src = "flags/" + src + ".png";
+    img.src = "newfolder/" + src + ".png";
 });
 
 let index = 0; // Track the current image
