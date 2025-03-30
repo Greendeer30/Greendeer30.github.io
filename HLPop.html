@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pick the Higher Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .choice {
+            display: inline-block;
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Which One Has the Higher Number?</h1>
+    <div id="option1" class="choice" onclick="makeChoice(1)"></div>
+    <div id="option2" class="choice" onclick="makeChoice(2)"></div>
+    <p id="result"></p>
+
+    <script>
+        let options = [
+            { name: "Alice", value: 42 },
+            { name: "Bob", value: 58 },
+            { name: "Charlie", value: 36 },
+            { name: "Diana", value: 67 }
+        ];
+        
+        let currentPair = [];
+        function generatePair() {
+            currentPair = options.sort(() => 0.5 - Math.random()).slice(0, 2);
+            document.getElementById("option1").innerText = currentPair[0].name;
+            document.getElementById("option2").innerText = currentPair[1].name;
+            document.getElementById("result").innerText = "";
+        }
+
+        function makeChoice(choice) {
+            let chosen = currentPair[choice - 1];
+            let other = currentPair[1 - (choice - 1)];
+            
+            if (chosen.value >= other.value) {
+                document.getElementById("result").innerText = "Correct!";
+            } else {
+                document.getElementById("result").innerText = "Wrong!";
+            }
+            
+            setTimeout(generatePair, 2000);
+        }
+
+        generatePair();
+    </script>
+</body>
+</html>
