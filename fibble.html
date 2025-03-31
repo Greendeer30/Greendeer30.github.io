@@ -336,6 +336,10 @@ var currentDay = (localStorage.getItem('currentDay') === null ? String(now.getFu
 scene = 'help';
 console.log(currentDay);
 console.log(now.getFullYear() * 768 + day);
+console.log(parseInt(currentDay) !== (now.getFullYear() * 768 + day));
+console.log(localStorage.getItem('current'));
+console.log(localStorage.getItem('currentLetter'));
+console.log(localStorage.getItem('typed'));
 if(parseInt(currentDay) !== (now.getFullYear() * 768 + day)){
     localStorage.setItem('currentDay', String(now.getFullYear() * 768 + day)); 
     
