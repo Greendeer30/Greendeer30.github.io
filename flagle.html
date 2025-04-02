@@ -10,8 +10,6 @@
 
   <body>
     <div class="top-bar">FLAGLE UNLIMITED</div>
-  
-    <div id="floatingBanner" class="banner" onclick="hideBanner()"></div>
     
     <div class="content">
         <p id="attempts">Attempts: 0/6</p>
@@ -39,11 +37,12 @@
     <br>
     <button id="nextButton" style.display="none">Next Flag ➡️</button>
     <br><br>
+
+    <div id="floatingBanner" class="banner" onclick="hideBanner()"></div>
       
     </center>
 
     <div class="score-box">
-      <h2>Score Tracker</h2>
       <p class="stat">Correct Guesses: <span id="correctGuesses">0</span></p>
       <p class="stat">Accuracy: <span id="accuracy">0%</span></p>
       <p class="stat timer">Time Left: <span id="timer">3:00</span></p>
