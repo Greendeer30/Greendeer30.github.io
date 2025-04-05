@@ -68,9 +68,48 @@
             cursor: pointer;
             margin-top: 10px;
         }
+
+        #topBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.5); /* translucent */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 0 20px;
+    font-family: sans-serif;
+    z-index: 999;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    font-size: 20px;
+  }
+
+  #homeButton {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  #homeButton:hover {
+    text-decoration: underline;
+  }
+
+  #lobbyName {
+    font-style: italic;
+    opacity: 0.9;
+  }
     </style>
 </head>
 <body>
+
+    <div id="topBar">
+        <a href="index.html" id="homeButton"> 🏠︎</a>
+        <span style="margin-left: 30px;" id="lobbyName"></span>
+      </div>      
+    
     <div id="game-container">
         <div>
             <button id="start-button" onclick="startGame()">Start Wikipedia Race</button>
@@ -97,6 +136,13 @@
 
 
     <script>
+    const lobby = sessionStorage.getItem("lobbyName");
+    if (lobby) {
+        var newWidth = 50 + 75 + String(lobby).length * 10;
+        document.getElementById("topBar").style.width = String(newWidth) + "px";
+        document.getElementById("lobbyName").textContent = `Lobby: ${lobby}`;
+    }
+
     function cyrb128(str) {
         let h1 = 1779033703, h2 = 3144134277,
                 h3 = 1013904242, h4 = 2773480762;

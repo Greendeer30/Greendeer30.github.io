@@ -23,7 +23,7 @@
     
     <body onkeydown="keyPressed(event)" onkeyup="keyReleased(event)" onresize="onResize()">
     
-    <p>don't look</p>
+    <p></p>
 
     <!-- Canvas -->
     <div id="canvas-wrapper">
@@ -322,6 +322,7 @@ var oneDay = 1000 * 60 * 60 * 24;
 var day = Math.floor(diff / oneDay);
 var seed = cyrb128(String(now.getFullYear() * 768 + day));
 var rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
+
 
 
 
