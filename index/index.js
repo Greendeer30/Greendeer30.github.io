@@ -75,7 +75,7 @@
         leaderboardList.style.display = "block";
 
         db.collection("leaderboard").onSnapshot((querySnapshot) => {
-          var leaderboard = [{user: "mark", points: 73}, {user: "nolan", points: 33}, {user: "landon", points: 45}, {user: "yiran", points: 8}, {user: "yiran", points: 8}];
+          var leaderboard = [];
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             leaderboard.push(data.user);
