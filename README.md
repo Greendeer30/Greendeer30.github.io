@@ -1,1 +1,6 @@
-Flagle
+
+THREE GAMES:
+
+- FIBBLE
+- FLAGLE
+- WIKI RACING

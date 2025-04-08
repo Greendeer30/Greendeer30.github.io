@@ -5,13 +5,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Flagle Unlimited</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link href="./flagle.css" rel="stylesheet" type="text/css"/>
 </head>
 
   <body>
 
     <div id="topBar">
-      <a href="index.html" id="homeButton"> 🏠︎</a>
+      <a href="../index.html" id="homeButton"> 🏠︎</a>
       <span style="margin-left: 30px;" id="lobbyName"></span>
     </div>   
     
@@ -23,7 +23,7 @@
 
     <center>
     <div class="container" id="container">
-      <img id="flag" src="newfolder/ad.png">
+      <img id="flag" src="../flags/ad.png">
         <div class="overlay" id="overlay">
             <div id="cover1"></div>
             <div id="cover2"></div>
@@ -56,8 +56,12 @@
           <button class="button" onclick="startTimer()">Start Timer</button>
           <button class="button reset" onclick="resetTimer()">Reset Timer</button>
       </div>
-  
-  <script src="script.js"></script>
+
+
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
+  <script src="universal/firebase.js"></script>
+  <script src="./flagle.js"></script>
 </body>
 
 </html>

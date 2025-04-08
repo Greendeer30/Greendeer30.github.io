@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Race</title>
+    <link href="./wiki.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+    <div id="topBar">
+        <a href="../index.html" id="homeButton"> 🏠︎</a>
+        <span style="margin-left: 30px;" id="lobbyName"></span>
+      </div>      
+    
+    <div id="game-container">
+        <div>
+            <button id="start-button" onclick="startGame()">Start Wikipedia Race</button>
+            <iframe id="wiki-frame" sandbox="allow-same-origin allow-scripts allow-popups allow-top-navigation-by-user-activation"src="" height="80%" width="100%"></iframe>
+        </div>
+        <center>
+        <div style="position:absolute; top: 83%; left: 0; right: 0; bottom: 0;">
+            <span>Go from <mark><b><span style="font-size: 250%" id="start-article"></span></b></mark> to <mark><b><span style="font-size: 250%" id="target-article"></span></b></mark></span>
+            <button class="info-button" id="info" onclick="toggleInfo()"><b> info </b></button>
+        </div>
+        </center>
+    </div>
+
+    <p id="timer" style="position:absolute; top: 90%; left: 0; right: 0; bottom: 0; font-size: 200%">0s</p>
+    <button class="timer-button" id="timerStop" onclick="stopTimer()"><b> Stop Timer </b></button>
+    
+    <div class="info-box" id="infoBox">
+        <p id="info-in-box">This is the additional information.</p>
+        <center>
+            <button class="close-btn" onclick="toggleInfo()">Close</button>
+        </center>
+    </div>
+
+    <script src="./wiki.js"></script>
+    
+</body>
+</html>

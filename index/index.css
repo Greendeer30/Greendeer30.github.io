@@ -1,0 +1,180 @@
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        }
+        #menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .menuButton {
+            padding: 15px 30px;
+            margin: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            background: #ff758c;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .menuButton:hover {
+            background: #ff416c;
+            transform: scale(1.05);
+        }
+        #contentFrame {
+            width: 100%;
+            height: 100vh;
+            border: none;
+            display: none;
+        }
+
+        .new-lobby-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 50px;
+        color: white;
+        padding: 10px 16px;
+        cursor: pointer;
+        overflow: hidden;
+        transition: width 0.3s ease;
+        width: 50px;
+        height: 50px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .new-lobby-btn:hover {
+        width: 150px;
+        }
+
+        .plus-icon {
+        font-size: 24px;
+        transition: transform 0.3s ease;
+        }
+
+        .btn-text {
+        margin-left: 10px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        }
+
+        .new-lobby-btn:hover .btn-text {
+        opacity: 1;
+        }
+
+        /* Popup Modal Styles */
+        .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0; top: 0;
+        width: 100%; height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+        }
+
+        .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+        }
+
+        .modal input {
+        width: 80%;
+        padding: 8px;
+        margin-top: 10px;
+        }
+
+        .modal button {
+        margin-top: 10px;
+        padding: 8px 12px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        }
+
+        .modal-close {
+        margin-left: 10px;
+        background-color: #ccc;
+        }
+
+        /* User list in bottom right */
+    #userList {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      max-width: 250px;
+      font-size: 14px;
+      z-index: 999;
+    }
+
+    #userList ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    #userList li {
+      margin-bottom: 4px;
+    }
+
+    /* Leaderboard list in bottom right */
+    #leaderboardList {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        max-width: 250px;
+        font-size: 14px;
+        z-index: 999;
+        text-align: left;
+      }
+  
+      #leaderboardList ul {
+        list-style: none;
+        padding-left: 0;
+        margin-top: 10px;
+      }
+  
+      #leaderboardList p {
+        margin-bottom: 4px;
+      }

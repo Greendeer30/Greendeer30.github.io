@@ -24,14 +24,14 @@ const lobby = sessionStorage.getItem("lobbyName");
 // Preload images
 images.forEach((path, i) => {
     savedImages[i] = new Image();
-    savedImages[i].src = "newfolder/" + path + ".png";
+    savedImages[i].src = "../flags/" + path + ".png";
 });
 
     
 
 images.forEach((src) => {
     const img = new Image();
-    img.src = "newfolder/" + src + ".png";
+    img.src = "../flags/" + src + ".png";
 });
 
 let index = 0; // Track the current image
@@ -49,7 +49,6 @@ function moveOn(){
     document.getElementById("flag").height = "200px";
     document.getElementById("flag").width = "auto";
     document.getElementById("container").width = document.getElementById("flag").width;
-    console.log(document.getElementById("container").width);
     attempts = 0;
     completed = false;
     document.getElementById("nextButton").style.visibility = "hidden";
@@ -254,6 +253,18 @@ function startTimer() {
             clearInterval(countdown);
             document.getElementById("timer").textContent = "Time's up!";
             document.getElementById("guessContainer").style.display = "none";
+
+            db.collection("leadboard").add({
+                user: sessionStorage.getItem("userName"),
+                points: correctGuesses
+            })
+            .then((docRef) => {
+                console.log("Document written with ID: ", docRef.id);
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+            });
+
             timerRunning = false;
         }
 
