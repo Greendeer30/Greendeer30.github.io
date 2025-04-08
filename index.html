@@ -136,31 +136,61 @@
         margin-left: 10px;
         background-color: #ccc;
         }
+
+        /* User list in bottom right */
+    #userList {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      max-width: 250px;
+      font-size: 14px;
+      z-index: 999;
+    }
+
+    #userList ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 10px;
+    }
+
+    #userList li {
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
 
     <div id="menu">
         <h1>Select a Game</h1>
-        <a href="./fibble.html"><button class="menuButton">Fibble</button></a>
+        <a href="./fibble.html"><button class="menuButton" id="forTesting">Fibble</button></a>
         <a href="./flagle.html"><button class="menuButton">Flagle</button></a>
         <a href="./wiki.html"><button class="menuButton">Wiki Racing</button></a>
     </div>
+
+    <div id="userList"></div>
 
     <button class="new-lobby-btn" id="openModalBtn">
         <span class="plus-icon">+</span>
         <span class="btn-text">New Lobby</span>
       </button>
-    
-      <div class="modal" id="popupModal">
-        <div class="modal-content">
-          <h3>Create a New Lobby</h3>
-          <input type="text" id="lobbyInput" placeholder="Enter lobby name" />
-          <br />
-          <button onclick="saveLobby()">Submit</button>
-          <button class="modal-close" onclick="closeModal()">Cancel</button>
+
+
+       <!-- Popup Modal -->
+        <div class="modal" id="popupModal">
+          <div class="modal-content">
+            <h3>Create or Join Lobby</h3>
+            <input type="text" id="lobbyInput" placeholder="Enter lobby name" />
+            <br />
+            <button onclick="saveLobby()">Submit</button>
+            <button class="modal-close" onclick="closeModal()">Cancel</button>
+          </div>
         </div>
-      </div>
+
+        <div id="userList" style="display: none;"></div>
 
       <!-- Google tag (gtag.js) -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-3SBJ0QTJP5"></script>
@@ -172,7 +202,9 @@
         gtag('config', 'G-3SBJ0QTJP5');
       </script>
 
-<script type="module" src="scriptWiki.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
+<script src="scriptWiki.js"></script>
 
 <script>
 
@@ -202,6 +234,22 @@
         sessionStorage.setItem("lobbyName", value);
         alert(`You've joined lobby "${value}"`);
         closeModal();
+
+        db.collection("lobbies").add({
+            lobbyName: value,
+            user: prompt("Enter your name:") || "Anonymous",
+            joinedAt: firebase.firestore.Timestamp.now(),
+            lastActive: firebase.firestore.Timestamp.now() // Use Firestore Timestamp
+        })
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+
+        displayUsers(value);
+
       } else {
         alert("Please enter a lobby name.");
       }
@@ -213,6 +261,95 @@
         closeModal();
       }
     };
+
+    function displayUsers(lobbyName) {
+      const userList = document.getElementById("userList");
+      userList.innerHTML = `<h3>Users in ${lobbyName}</h3>`;
+      userList.style.display = "block";
+
+      db.collection("lobbies").where("lobbyName", "==", lobbyName).onSnapshot((querySnapshot) => {
+        userList.innerHTML = `<h3>Users in ${lobbyName}</h3><ul>`;
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          userList.innerHTML += `<li>${data.user}</li>`;
+        });
+        userList.innerHTML += `</ul>`;
+      });
+    } 
+
+    function updateLastActive(lobbyName, userName) {
+        const userRef = db.collection("lobbies").where("lobbyName", "==", lobbyName).where("user", "==", userName);
+
+        userRef.get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                doc.ref.update({
+                    lastActive: firebase.firestore.Timestamp.now()
+                });
+            });
+        }).catch((error) => {
+            console.error("Error updating last active timestamp: ", error);
+        });
+    }
+
+    // Call this function every minute
+    setInterval(() => {
+        console.log(1);
+        const lobbyName = sessionStorage.getItem("lobbyName");
+        const userName = sessionStorage.getItem("userName"); // Store the user's name in sessionStorage
+        if (lobbyName && userName) {
+            updateLastActive(lobbyName, userName);
+        }
+    }, 6000);
+
+    function removeInactiveUsers(lobbyName) {
+        const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 1000)); // 5 minutes ago
+        console.log("Threshold for inactivity:", threshold.toDate());
+
+        db.collection("lobbies")
+            .where("lobbyName", "==", lobbyName)
+            .where("lastActive", "<", threshold)
+            .get()
+            .then((querySnapshot) => {
+                console.log(`Found ${querySnapshot.size} inactive users.`);
+                querySnapshot.forEach((doc) => {
+                    console.log("Removing user:", doc.data());
+                    doc.ref.delete().then(() => {
+                        console.log(`Removed inactive user: ${doc.data().user}`);
+                    }).catch((error) => {
+                        console.error("Error removing inactive user: ", error);
+                    });
+                });
+            })
+            .catch((error) => {
+                console.error("Error querying inactive users: ", error);
+            });
+    }
+
+    // Call this function periodically
+    setInterval(() => {
+        const lobbyName = sessionStorage.getItem("lobbyName");
+        if (lobbyName) {
+            removeInactiveUsers(lobbyName);
+        }
+    }, 6000); // Check every 6 seconds
+
+    // Update "last active" timestamp every minute
+    setInterval(() => {
+        const lobbyName = sessionStorage.getItem("lobbyName");
+        const userName = sessionStorage.getItem("userName");
+        if (lobbyName && userName) {
+            updateLastActive(lobbyName, userName);
+        }
+    }, 60000);
+
+    // Remove inactive users every minute
+    setInterval(() => {
+        const lobbyName = sessionStorage.getItem("lobbyName");
+        if (lobbyName) {
+            removeInactiveUsers(lobbyName);
+        }
+    }, 60000);
+
     </script>
 </body>
 </html>

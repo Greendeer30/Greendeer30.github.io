@@ -1,5 +1,23 @@
 {
   "dependencies": {
     "firebase": "^11.6.0"
-  }
+  },
+  "name": "greendeer30.github.io",
+  "version": "1.0.0",
+  "description": "Flagle",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Greendeer30/Greendeer30.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Greendeer30/Greendeer30.github.io/issues"
+  },
+  "homepage": "https://github.com/Greendeer30/Greendeer30.github.io#readme"
 }
