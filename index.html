@@ -235,9 +235,11 @@
         alert(`You've joined lobby "${value}"`);
         closeModal();
 
+        sessionStorage.setItem("userName", prompt("Enter your name:") || "Anonymous");
+
         db.collection("lobbies").add({
             lobbyName: value,
-            user: prompt("Enter your name:") || "Anonymous",
+            user: sessionStorage.getItem("userName"),
             joinedAt: firebase.firestore.Timestamp.now(),
             lastActive: firebase.firestore.Timestamp.now() // Use Firestore Timestamp
         })
@@ -293,20 +295,18 @@
 
     // Call this function every minute
     setInterval(() => {
-        console.log(1);
         const lobbyName = sessionStorage.getItem("lobbyName");
         const userName = sessionStorage.getItem("userName"); // Store the user's name in sessionStorage
-        if (lobbyName && userName) {
+        if (lobbyName !== null && userName !== null) {
             updateLastActive(lobbyName, userName);
         }
-    }, 6000);
+    }, 60000);
 
     function removeInactiveUsers(lobbyName) {
-        const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 1000)); // 5 minutes ago
+        const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 2 * 60 * 1000)); // 5 minutes ago
         console.log("Threshold for inactivity:", threshold.toDate());
 
         db.collection("lobbies")
-            .where("lobbyName", "==", lobbyName)
             .where("lastActive", "<", threshold)
             .get()
             .then((querySnapshot) => {
@@ -331,24 +331,7 @@
         if (lobbyName) {
             removeInactiveUsers(lobbyName);
         }
-    }, 6000); // Check every 6 seconds
-
-    // Update "last active" timestamp every minute
-    setInterval(() => {
-        const lobbyName = sessionStorage.getItem("lobbyName");
-        const userName = sessionStorage.getItem("userName");
-        if (lobbyName && userName) {
-            updateLastActive(lobbyName, userName);
-        }
-    }, 60000);
-
-    // Remove inactive users every minute
-    setInterval(() => {
-        const lobbyName = sessionStorage.getItem("lobbyName");
-        if (lobbyName) {
-            removeInactiveUsers(lobbyName);
-        }
-    }, 60000);
+    }, 120000); // Check every 6 seconds
 
     </script>
 </body>
