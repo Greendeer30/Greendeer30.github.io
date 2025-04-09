@@ -18,3 +18,25 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize Cloud Firestore and get a reference to the service
 const db = firebase.firestore();
+const auth = firebase.auth();
+
+//auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+
+auth.onAuthStateChanged((user) => {
+  if (window.location.href.includes("login.html")) {
+    if (user) {
+      console.log(user);
+      console.log("User is already logged in:", user.email);
+      sessionStorage.setItem("userName", user.uid);
+      window.location.href = '../index.html';
+    }
+  } else if (user) {
+    console.log(user.uid);
+    console.log("User is logged in:", user.username);
+    sessionStorage.setItem("userName", user.uid);
+  } else {
+    console.log("No user is logged in.");
+    window.location.href = 'login/login.html';
+  }
+});

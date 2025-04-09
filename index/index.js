@@ -33,18 +33,12 @@
         sessionStorage.setItem("lobbyName", value);
         alert(`You've joined lobby "${value}"`);
         closeModal();
-
-        var userName = prompt("Please enter your name:");
-        while(userName == null || userName == ""){
-            userName = prompt("Please enter a valid name:");
-        }
-        userName = normalizeToNameFormat(userName);
-        sessionStorage.setItem("userName", userName);
+        
         removeInactiveUsers(value);
 
         db.collection("lobbies").add({
             lobbyName: value,
-            user: sessionStorage.getItem("userName"),
+            user: localStorage.getItem("userName"),
             lastActive: firebase.firestore.Timestamp.now() // Use Firestore Timestamp
         })
         .then((docRef) => {
@@ -119,6 +113,13 @@
         
       } 
       displayLeaderboard();
+
+      function displayName() {
+        nameList.innerHTML = `<h3>Logged in as:</h3>`;
+        nameList.style.display = "block";
+        nameList.innerHTML += `<p>${localStorage.getItem("userName")}</p>`;
+      } 
+      displayName();
 
     function updateLastActive(lobbyName, userName) {
         const userRef = db.collection("lobbies").where("lobbyName", "==", lobbyName).where("user", "==", userName);
