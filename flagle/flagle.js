@@ -254,7 +254,7 @@ function startTimer() {
             document.getElementById("timer").textContent = "Time's up!";
             document.getElementById("guessContainer").style.display = "none";
 
-            db.collection("leadboard").add({
+            db.collection("leaderboard").add({
                 user: sessionStorage.getItem("userName"),
                 points: correctGuesses
             })
