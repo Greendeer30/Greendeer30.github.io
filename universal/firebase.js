@@ -23,18 +23,40 @@ const auth = firebase.auth();
 //auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 
+async function insertUsername(userId) {
+  try {
+    // Query the "users" collection for documents where "uid" matches the userId
+    const querySnapshot = await db.collection("users").where("uid", "==", userId).get();
+
+    // Check if any documents were found
+    if (!querySnapshot.empty) {
+      // Get the first document's data (assuming "uid" is unique)
+      const doc = querySnapshot.docs[0];
+      const username = doc.data().username;
+
+      // Save the username to localStorage
+      localStorage.setItem("userName", username);
+      console.log("Username saved to localStorage:", username);
+    } else {
+      console.error("No user found with the given UID:", userId);
+    }
+  } catch (error) {
+    console.error("Error fetching username:", error);
+  }
+}
+
 auth.onAuthStateChanged((user) => {
   if (window.location.href.includes("login.html")) {
     if (user) {
       console.log(user);
       console.log("User is already logged in:", user.email);
-      sessionStorage.setItem("userName", user.uid);
+      insertUsername(user.uid);
       window.location.href = '../index.html';
     }
   } else if (user) {
     console.log(user.uid);
     console.log("User is logged in:", user.username);
-    sessionStorage.setItem("userName", user.uid);
+    insertUsername(user.uid)
   } else {
     console.log("No user is logged in.");
     window.location.href = 'login/login.html';

@@ -29,19 +29,17 @@
     try {
       if (isSignup) {
         const userCred = await auth.createUserWithEmailAndPassword(email, password);
-  
-        localStorage.setItem("userName", username);
 
-        await db.collection("users").doc(userCred.user.uid).set({
-            username,
+        db.collection("users").add({
+            username: username,
+            email: email,
             uid: userCred.user.uid,
           });
-  
+        console.log("account created");
         message.textContent = "Account created successfully!";
       } else {
         await auth.signInWithEmailAndPassword(email, password);
         message.textContent = "Logged in successfully!";
-        sessionStorage.setItem("userName", userCred.user.uid);
       }
     } catch (err) {
       console.error(err);

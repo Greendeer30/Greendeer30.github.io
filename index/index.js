@@ -138,7 +138,7 @@
     // Call this function every minute
     setInterval(() => {
         const lobbyName = sessionStorage.getItem("lobbyName");
-        const userName = sessionStorage.getItem("userName"); // Store the user's name in sessionStorage
+        const userName = localStorage.getItem("userName"); // Store the user's name in localStorage
         if (lobbyName !== null && userName !== null) {
             updateLastActive(lobbyName, userName);
         }
