@@ -18,6 +18,15 @@
       modal.style.display = "none";
     }
 
+    function normalizeToNameFormat(str) {
+      return str
+          .split(' ') // Split the string into an array of words
+          .map(word => 
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() // Capitalize first letter and lowercase the rest
+          )
+          .join(' '); // Join the words back into a single string
+    }
+
     function saveLobby() {
       const value = document.getElementById("lobbyInput").value;
       if (value.trim()) {
@@ -25,7 +34,12 @@
         alert(`You've joined lobby "${value}"`);
         closeModal();
 
-        sessionStorage.setItem("userName", prompt("Enter your name:") || "Anonymous");
+        const userName = prompt("Please enter your name:");
+        while(userName == null || userName == ""){
+            userName = prompt("Please enter a valid name:");
+        }
+        userName = normalizeToNameFormat(userName);
+        sessionStorage.setItem("userName", userName);
         removeInactiveUsers(value);
 
         db.collection("lobbies").add({
@@ -78,7 +92,7 @@
           var leaderboard = [];
           querySnapshot.forEach((doc) => {
             const data = doc.data();
-            leaderboard.push(data.user);
+            leaderboard.push(data);
           });
           var sortedLeaderboard = [];
           while(leaderboard.length > 0){
