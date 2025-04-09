@@ -34,7 +34,7 @@
         alert(`You've joined lobby "${value}"`);
         closeModal();
 
-        const userName = prompt("Please enter your name:");
+        var userName = prompt("Please enter your name:");
         while(userName == null || userName == ""){
             userName = prompt("Please enter a valid name:");
         }
