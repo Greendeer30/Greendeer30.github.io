@@ -48,9 +48,6 @@ async function insertUsername(userId) {
 auth.onAuthStateChanged((user) => {
   console.log("moving!");
   console.log(user);
-});
-
-function movePages(){
   if (window.location.href.includes("login.html")) {
     if (user) {
       console.log(user);
@@ -61,11 +58,15 @@ function movePages(){
   } else if (user) {
     console.log(user.uid);
     console.log("User is logged in:", user.username);
-    insertUsername(user.uid)
+    insertUsername(user.uid);
   } else {
     console.log("No user is logged in.");
     window.location.href = 'login/login.html';
   }
+});
+
+async function movePages(){
+  
 }
 
 movePages();
