@@ -1,6 +1,4 @@
-
-  
-  let isSignup = false;
+let isSignup = false;
   
   const form = document.getElementById("auth-form");
   const toggle = document.getElementById("toggle");
@@ -26,15 +24,34 @@
   
     message.textContent = "";
   
+    if (!username || !email || !password) {
+      message.textContent = "All fields are required!";
+      return;
+    }
+  
     try {
       if (isSignup) {
         await auth.createUserWithEmailAndPassword(email, password).then(userCred => {
+          const uid = userCred.user.uid;
+          try {
+            auth.currentUser.updateProfile({
+              displayName: username,
+            });
+          }
+          catch (error) {
+            console.error("Error updating profile:", error);
+          }
           db.collection("users").add({
             username: username,
             email: email,
-            uid: userCred.user.uid,
+            uid: uid,
+          }).then(() => {
+            console.log("User added to Firestore");
+          }).catch((error) => {
+            console.error("Error adding user to Firestore:", error);
           });
           console.log("account created");
+          console.log(auth.currentUser.displayName);
           message.textContent = "Account created successfully!";
           insertUsername(auth.currentUser.uid);
         });
@@ -49,5 +66,4 @@
       message.textContent = err.message;
     }
   });
-  
-  
+
