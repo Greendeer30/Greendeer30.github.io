@@ -28,18 +28,21 @@
   
     try {
       if (isSignup) {
-        const userCred = await auth.createUserWithEmailAndPassword(email, password);
-
-        db.collection("users").add({
+        await auth.createUserWithEmailAndPassword(email, password).then(userCred => {
+          db.collection("users").add({
             username: username,
             email: email,
             uid: userCred.user.uid,
           });
-        console.log("account created");
-        message.textContent = "Account created successfully!";
+          console.log("account created");
+          message.textContent = "Account created successfully!";
+          insertUsername(auth.currentUser.uid);
+        });
       } else {
         await auth.signInWithEmailAndPassword(email, password);
         message.textContent = "Logged in successfully!";
+        insertUsername(auth.currentUser.uid);
+        window.location.href = '../index.html';
       }
     } catch (err) {
       console.error(err);

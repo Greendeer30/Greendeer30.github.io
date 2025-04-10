@@ -46,6 +46,8 @@ async function insertUsername(userId) {
 }
 
 auth.onAuthStateChanged((user) => {
+  console.log("moving!");
+  console.log(user);
   if (window.location.href.includes("login.html")) {
     if (user) {
       console.log(user);
@@ -62,3 +64,9 @@ auth.onAuthStateChanged((user) => {
     window.location.href = 'login/login.html';
   }
 });
+
+function movePages(){
+  
+}
+
+movePages();
