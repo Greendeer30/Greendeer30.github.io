@@ -44,6 +44,7 @@ let isSignup = false;
           db.collection("users").add({
             username: username,
             email: email,
+            date: new Date(),
             uid: uid,
           }).then(() => {
             console.log("User added to Firestore");

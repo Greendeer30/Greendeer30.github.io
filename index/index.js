@@ -1,22 +1,89 @@
-    const openModalBtn = document.getElementById("openModalBtn");
-    const modal = document.getElementById("popupModal");
+const images = ["ad", "ae", "af", "ag", "ai", "al", "am", "ao", "aq", "ar", "as", "at", "au", "aw", "ax", "az", "ba", "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bl", "bm", "bn", "bo", "bq", "br", "bs", "bt", "bw", "by", "bz", "ca", "cc", "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr", "cu", "cv", "cw", "cx", "cy", "cz", "de", "dj", "dk", "dm", "do", "dz", "ec", "ee", "eg", "er", "es", "et", "fi", "fj", "fk", "fm", "fo", "fr", "ga", "gb", "gd", "ge", "gf", "gg", "gh", "gi", "gl", "gm", "gn", "gp", "gq", "gr", "gs", "gt", "gu", "gw", "gy", "hk", "hn", "hr", "ht", "hu", "id", "ie", "il", "im", "in", "io", "iq", "ir", "is", "it", "jm", "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw", "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu", "lv", "ly", "ma", "mc", "md", "me", "mf", "mg", "mh", "mk", "ml", "mm", "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx", "my", "mz", "na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np", "nr", "nu", "nz", "om", "pa", "pe", "pf", "pg", "ph", "pk", "pl", "pm", "pn", "pr", "ps", "pt", "pw", "py", "qa", "re", "ro", "rs", "ru", "rw", "sa", "sb", "sc", "sd", "se", "sg", "sh", "si", "sk", "sl", "sm", "sn", "so", "sr", "ss", "st", "sv", "sy", "sz", "tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn", "to", "tr", "tt", "tv", "tw", "tz", "ua", "ug", "us", "uy", "uz", "va", "vc", "ve", "vg", "vi", "vn", "vu", "wf", "ws", "xk", "ye", "yt", "za", "zm", "zw"];
+const randomImage = images[Math.floor(Math.random() * images.length)];
+const backgroundContainer = document.getElementById("background-container");
+  
 
-    openModalBtn.onclick = () => {
-      modal.style.display = "flex";
-      document.getElementById("lobbyInput").focus();
-    };
+// Set the CSS variable for the background image
+backgroundContainer.style.setProperty(
+  "--background-image",
+  `url('../flags/${randomImage}.png')`
+);
 
-    document.getElementById("lobbyInput").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Optional: prevents accidental form submissions
-            saveLobby();
+function SignOut(){
+    auth.signOut().then(() => {
+        console.log("User signed out successfully.");
+        loggedIn = false;
+        dashboard.classList.remove('active');
+        loginSection.classList.remove('hidden');
+    });
+}
+
+const menuToggle = document.getElementById('menu-toggle');
+    const closeMenu = document.getElementById('close-menu');
+    const sideMenu = document.getElementById('side-menu');
+    const loginButton = document.getElementById('login-button');
+    const loginSection = document.getElementById('login-section');
+    const dashboard = document.getElementById('dashboard');
+    const userInfo = document.getElementById('user-info');
+    const userInfoHeader = document.getElementById('user-info-header');
+    const joinLobbyButton = document.getElementById('join-lobby');
+    const lobbySection = document.getElementById('lobby-section');
+    const userBox = document.getElementById('user-box');
+    const lobbyBox = document.getElementById('lobby-box');
+
+    let loggedIn = false;
+    let inLobby = false;
+
+    function logIn(){
+      userInfoHeader.innerHTML =  "🎉Welcome, " + localStorage.getItem("userName") + "!🎉";
+      userInfo.innerHTML = `<em>Username: </em><strong>${localStorage.getItem("userName")}</strong><br>` + `<em>Email: </em><strong>${localStorage.getItem("email")}</strong>`;
+      loginSection.classList.add('hidden');
+      dashboard.classList.add('active');
+      const dateC = localStorage.getItem("dateCreated");
+      const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      console.log(dateC[3]);
+      userInfo.innerHTML += `<br><em>Account Created: </em><strong>${months[localStorage.getItem("monthCreated")]} ${localStorage.getItem("dateCreated")}, ${localStorage.getItem("yearCreated")}</strong>`;
+    }
+
+    auth.onAuthStateChanged((user) => {
+        console.log("moving!");
+        console.log(user);
+        if (user) {
+          console.log(user.uid);
+          console.log("User is logged in:", user.username);
+          insertUsername(user.uid);
+          loggedIn = true;
+          logIn();
+        } else {
+          console.log("No user is logged in.");
+          loggedIn = false;
         }
+      });
+
+    menuToggle.addEventListener('click', () => {
+      sideMenu.classList.add('active');
+    });
+
+    closeMenu.addEventListener('click', () => {
+      sideMenu.classList.remove('active');
+    });
+
+    joinLobbyButton.addEventListener('click', () => {
+      inLobby = true;
+      lobbySection.innerHTML = `
+        <p>Lobby Name: Not Working Yet</p>
+        <ul>
+          <li>johndoe</li>
+          <li>alice</li>
+          <li>bob</li>
+        </ul>
+      `;
     });
 
 
-    function closeModal() {
-      modal.style.display = "none";
-    }
 
     function normalizeToNameFormat(str) {
       return str
@@ -55,13 +122,6 @@
       }
     }
 
-    // Optional: close modal when clicking outside of content
-    window.onclick = function(event) {
-      if (event.target === modal) {
-        closeModal();
-      }
-    };
-
     function displayUsers(lobbyName) {
       const userList = document.getElementById("userList");
       userList.innerHTML = `<h3>Users in ${lobbyName}</h3>`;
@@ -78,10 +138,6 @@
     } 
 
     function displayLeaderboard() {
-        const leaderboardList = document.getElementById("leaderboardList");
-        userList.innerHTML = `<h3>Flagle Leaderboard</h3>`;
-        leaderboardList.style.display = "block";
-
         db.collection("leaderboard").onSnapshot((querySnapshot) => {
           var leaderboard = [];
           querySnapshot.forEach((doc) => {
@@ -100,15 +156,16 @@
             leaderboard.splice(leadMax, 1);
           }
           leaderboard = sortedLeaderboard;
-          if(leaderboard.length > 0){
-            leaderboardList.innerHTML = `<h3>Flagle Leaderboard</h3><ul>`;
-          }
-          for(var i = 0;i < leaderboard.length && i < 5;i++){
-            leaderboardList.innerHTML += `<p>#${i + 1}) ${leaderboard[i].user}: ${leaderboard[i].points}</p>`
-            }
-            if(leaderboard.length > 0){
-                leaderboardList.innerHTML += `</ul>`
-            }
+          
+          document.getElementById("p1").innerHTML = leaderboard[0].points;
+          document.getElementById("p2").innerHTML = leaderboard[1].points;
+          document.getElementById("p3").innerHTML = leaderboard[2].points;
+          document.getElementById("p4").innerHTML = leaderboard[3].points;
+
+          document.getElementById("u1").innerHTML = leaderboard[0].user;
+          document.getElementById("u2").innerHTML = leaderboard[1].user;
+          document.getElementById("u3").innerHTML = leaderboard[2].user;
+          document.getElementById("u4").innerHTML = leaderboard[3].user;
         });
         
       } 

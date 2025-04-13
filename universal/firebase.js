@@ -33,9 +33,17 @@ async function insertUsername(userId) {
       // Get the first document's data (assuming "uid" is unique)
       const doc = querySnapshot.docs[0];
       const username = doc.data().username;
+      const email = doc.data().email;
+      const dateDay = doc.data().date.toDate().getDate()
+      const dateMonth = doc.data().date.toDate().getMonth();
+      const dateYear = doc.data().date.toDate().getFullYear();
 
       // Save the username to localStorage
       localStorage.setItem("userName", username);
+      localStorage.setItem("email", email);
+      localStorage.setItem("dateCreated", dateDay);
+      localStorage.setItem("monthCreated", dateMonth);
+      localStorage.setItem("yearCreated", dateYear);
       console.log("Username saved to localStorage:", username);
     } else {
       console.error("No user found with the given UID:", userId);
@@ -44,29 +52,3 @@ async function insertUsername(userId) {
     console.error("Error fetching username:", error);
   }
 }
-
-auth.onAuthStateChanged((user) => {
-  console.log("moving!");
-  console.log(user);
-  if (window.location.href.includes("login.html")) {
-    if (user) {
-      console.log(user);
-      console.log("User is already logged in:", user.email);
-      insertUsername(user.uid);
-      window.location.href = '../index.html';
-    }
-  } else if (user) {
-    console.log(user.uid);
-    console.log("User is logged in:", user.username);
-    insertUsername(user.uid);
-  } else {
-    console.log("No user is logged in.");
-    window.location.href = 'login/login.html';
-  }
-});
-
-async function movePages(){
-  
-}
-
-movePages();

@@ -255,8 +255,9 @@ function startTimer() {
             document.getElementById("guessContainer").style.display = "none";
 
             db.collection("leaderboard").add({
-                user: sessionStorage.getItem("userName"),
-                points: correctGuesses
+                user: localStorage.getItem("userName"),
+                points: correctGuesses,
+                uid: auth.currentUser.uid
             })
             .then((docRef) => {
                 console.log("Document written with ID: ", docRef.id);

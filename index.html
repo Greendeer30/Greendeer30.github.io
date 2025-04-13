@@ -1,60 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Greendeer's Projects</title>
-    <link rel="stylesheet" href="index/index.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Website</title>
+  <link rel="stylesheet" href="./index/index.css" />
 </head>
 <body>
+  <div id="background-container"></div>
 
-    <div id="menu">
-        <h1>Select a Game</h1>
-        <a href="./fibble/fibble.html"><button class="menuButton" id="forTesting">Fibble</button></a>
-        <a href="./flagle/flagle.html"><button class="menuButton">Flagle</button></a>
-        <a href="./wiki/wiki.html"><button class="menuButton">Wiki Racing</button></a>
+  <header>
+    <button id="menu-toggle">☰</button>
+    <h1 class="header-title">Greendeer Unlimited</h1>
+  </header>
+
+  <nav id="side-menu">
+    <button id="close-menu">✖</button>
+    <ul>
+      <li><a href="./fibble/fibble.html">Fibble</a></li>
+      <li><a href="./flagle/flagle.html">Flagle</a></li>
+      <li><a href="./wiki/wiki.html">Wiki</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div id="login-section" class="centered">
+      <a href="./login/login.html"><button id="login-button">Log In</button></a>
     </div>
 
-    <div id="userList"></div>
+    <div id="dashboard">
+      <div class="box left" id="user-box">
+        <div class="sub-box" id="user-info-box">
+          <h2 id="user-info-header">User Info</h2>
+          <p id="user-info">User details go here.</p>
+          <br>
+          <button id="sign-out" onClick="SignOut()">Log Out</button>
+        </div>
+          
+          <div class="leaderboard">
+            <div class="leaderboard-header">🏆 Flagle Leaderboard</div>
+            <div class="leaderboard-entry top-entry">
+              <span class="rank">🥇</span>
+              <span class="name" id="u1">Alice</span>
+              <span class="points" id="p1">120 pts</span>
+            </div>
+            <div class="leaderboard-entry">
+              <span class="rank">🥈</span>
+              <span class="name" id="u2">Bob</span>
+              <span class="points" id="p2">110 pts</span>
+            </div>
+            <div class="leaderboard-entry">
+              <span class="rank">🥉</span>
+              <span class="name" id="u3">Charlie</span>
+              <span class="points" id="p3">95 pts</span>
+            </div>
+            <div class="leaderboard-entry">
+              <span class="rank">4</span>
+              <span class="name" id="u4">Dana</span>
+              <span class="points" id="p4">88 pts</span>
+            </div>
+          </div>
+      </div>
+      <div class="box right" id="lobby-box">
+        <h2>Lobby</h2>
+        <div id="lobby-section">
+          <button id="join-lobby">Join Lobby (Doesn't Work)</button>
+        </div>
+      </div>
+    </div>
+  </main>
 
-    <div id="leaderboardList"></div>
+  <div id="userList"></div>
 
     <div id="nameList"></div>
+  
 
-    <button class="new-lobby-btn" id="openModalBtn">
-        <span class="plus-icon">+</span>
-        <span class="btn-text">New Lobby</span>
-      </button>
-
-
-       <!-- Popup Modal -->
-        <div class="modal" id="popupModal">
-          <div class="modal-content">
-            <h3>Create or Join Lobby</h3>
-            <input type="text" id="lobbyInput" placeholder="Enter lobby name" />
-            <br/>
-            <button onclick="saveLobby()">Submit</button>
-            <button class="modal-close" onclick="closeModal()">Cancel</button>
-          </div>
-        </div>
-
-        <div id="userList" style="display: none;"></div>
-
-      <!-- Google tag (gtag.js) -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-3SBJ0QTJP5"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-
-        gtag('config', 'G-3SBJ0QTJP5');
-      </script>
-
-<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
-<script src="universal/firebase.js"></script>
-<script src="index/index.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
+  <script src="universal/firebase.js"></script>
+  <script src="./index/index.js"></script>
 </body>
 </html>
