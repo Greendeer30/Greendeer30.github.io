@@ -268,7 +268,7 @@ function removeInactiveUsers() {
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if(inLobby){
-          displayUsers();
+          displayUsers(localStorage.getItem("lobbyName"));
         } else{
           displayLobbies();
         }
