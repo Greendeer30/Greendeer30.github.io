@@ -29,7 +29,7 @@ html {
         background-image: var(--background-image, none);
         background-size: cover;
         background-position: center;
-        filter: blur(7px) grayscale(50%) brightness(50%) contrast(90%);
+        filter: blur(6px) grayscale(50%) brightness(50%) contrast(90%);
         transform: scale(1.1); /* ensures blur doesn't crop at edges */
       }
 
@@ -37,7 +37,7 @@ html {
         content: "";
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.5); /* dark overlay */
+        background: rgba(0, 0, 0, 0.2); /* dark overlay */
         z-index: 1;
       }
 
@@ -225,6 +225,12 @@ html {
       gap: 1em; /* Add spacing between the child boxes */
     }
 
+    /* Ensure the left box is a flex container */
+    .box.right {
+      display: flex;
+    }
+
+
     /* Style for the sub-boxes */
     .sub-box {
       flex: 1; /* Allow the sub-boxes to grow and take equal space */
@@ -300,3 +306,162 @@ html {
     .top-entry {
       background: #e0e7ff;
     }
+
+
+
+    #lobby-interface {
+      flex: 1;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      background: linear-gradient(to top right, #1e1e2f, #343a40);
+      animation: fadeIn 1s ease;
+    }
+
+    #lobby-interface2 {
+      display: none;
+      flex: 1;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      background: linear-gradient(to top right, #1e1e2f, #343a40);
+      animation: fadeIn 1s ease;
+    }
+    
+    .lobby-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1
+    }
+    
+    .lobby {
+      background: #2c2f3f;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    
+    .lobby:hover {
+      transform: scale(1.02);
+    }
+    
+    .lobby h3 {
+      margin: 0 0 10px;
+      color: #ffdd57;
+    }
+    
+    .user-list {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+    
+    .fade-in {
+      animation: fadeIn 1s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .join-lobby {
+      font-size: 15px;
+      padding: 0.5em;
+      align-self: right;
+    }
+
+    .list-item {
+      display: flex; /* Use Flexbox to align items horizontally */
+      align-items: center; /* Vertically center the content and button */
+      justify-content: space-between; /* Push the button to the right */
+    }
+
+    .join-lobby {
+      font-size: 15px;
+      padding: 0.5em;
+      margin-left: auto; /* Push the button to the right */
+      display: inline-block; /* Ensure the button stays inline */
+    }
+
+    .info {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 5px;
+    }
+
+
+
+
+    /* Style the container for the user list */
+#lobby-users {
+  background-color: #f9f9f9; /* Light background for contrast */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  padding: 20px; /* Add spacing inside the container */
+  margin: 20px auto; /* Center the container with some margin */
+  max-width: 600px; /* Limit the width for better readability */
+  font-family: 'Arial', sans-serif; /* Clean font */
+  color: #333; /* Dark text for readability */
+}
+
+/* Style the header of the user list */
+#lobby-users h3 {
+  font-size: 1.5rem; /* Larger font size for the header */
+  color: #007bff; /* Blue color for emphasis */
+  margin-bottom: 15px; /* Add spacing below the header */
+  text-align: center; /* Center the header text */
+}
+
+/* Style the unordered list */
+#lobby-users ul {
+  list-style: none; /* Remove default bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+/* Style each list item */
+.user-item {
+  background-color: #ffffff; /* White background for each user */
+  border: 1px solid #ddd; /* Light border for separation */
+  border-radius: 8px; /* Rounded corners for each item */
+  padding: 10px 15px; /* Add spacing inside each item */
+  margin-bottom: 10px; /* Add spacing between items */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Vertically center content */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effect */
+}
+
+/* Add hover effect for list items */
+.user-item:hover {
+  transform: translateY(-3px); /* Slight lift on hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+/* Style the user name */
+.user-name {
+  font-size: 1rem; /* Standard font size */
+  font-weight: bold; /* Make the username bold */
+  color: #333; /* Dark text for readability */
+  display: flex; /* Align the dot and name horizontally */
+  align-items: center; /* Vertically center the dot and name */
+}
+
+/* Style the green status dot */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #28a745; /* Green color for active users */
+  border-radius: 50%; /* Make it a circle */
+  margin-right: 10px; /* Add spacing between the dot and the name */
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.5); /* Add a glow effect */
+}

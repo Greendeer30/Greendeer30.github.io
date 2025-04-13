@@ -11,7 +11,7 @@ backgroundContainer.style.setProperty(
 
 function SignOut(){
     auth.signOut().then(() => {
-        console.log("User signed out successfully.");
+        //console.log("User signed out successfully.");
         loggedIn = false;
         dashboard.classList.remove('active');
         loginSection.classList.remove('hidden');
@@ -19,17 +19,17 @@ function SignOut(){
 }
 
 const menuToggle = document.getElementById('menu-toggle');
-    const closeMenu = document.getElementById('close-menu');
-    const sideMenu = document.getElementById('side-menu');
-    const loginButton = document.getElementById('login-button');
-    const loginSection = document.getElementById('login-section');
-    const dashboard = document.getElementById('dashboard');
-    const userInfo = document.getElementById('user-info');
-    const userInfoHeader = document.getElementById('user-info-header');
-    const joinLobbyButton = document.getElementById('join-lobby');
-    const lobbySection = document.getElementById('lobby-section');
-    const userBox = document.getElementById('user-box');
-    const lobbyBox = document.getElementById('lobby-box');
+const closeMenu = document.getElementById('close-menu');
+const sideMenu = document.getElementById('side-menu');
+const loginButton = document.getElementById('login-button');
+const loginSection = document.getElementById('login-section');
+const dashboard = document.getElementById('dashboard');
+const userInfo = document.getElementById('user-info');
+const userInfoHeader = document.getElementById('user-info-header');
+const joinLobbyButton = document.getElementById('join-lobby');
+const lobbySection = document.getElementById('lobby-section');
+const userBox = document.getElementById('user-box');
+const lobbyBox = document.getElementById('lobby-box');
 
     let loggedIn = false;
     let inLobby = false;
@@ -44,21 +44,21 @@ const menuToggle = document.getElementById('menu-toggle');
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
       ];
-      console.log(dateC[3]);
+      //console.log(dateC[3]);
       userInfo.innerHTML += `<br><em>Account Created: </em><strong>${months[localStorage.getItem("monthCreated")]} ${localStorage.getItem("dateCreated")}, ${localStorage.getItem("yearCreated")}</strong>`;
     }
 
     auth.onAuthStateChanged((user) => {
-        console.log("moving!");
-        console.log(user);
+        //console.log("moving!");
+        //console.log(user);
         if (user) {
-          console.log(user.uid);
-          console.log("User is logged in:", user.username);
+          //console.log(user.uid);
+          //console.log("User is logged in:", user.username);
           insertUsername(user.uid);
           loggedIn = true;
           logIn();
         } else {
-          console.log("No user is logged in.");
+          //console.log("No user is logged in.");
           loggedIn = false;
         }
       });
@@ -69,18 +69,6 @@ const menuToggle = document.getElementById('menu-toggle');
 
     closeMenu.addEventListener('click', () => {
       sideMenu.classList.remove('active');
-    });
-
-    joinLobbyButton.addEventListener('click', () => {
-      inLobby = true;
-      lobbySection.innerHTML = `
-        <p>Lobby Name: Not Working Yet</p>
-        <ul>
-          <li>johndoe</li>
-          <li>alice</li>
-          <li>bob</li>
-        </ul>
-      `;
     });
 
 
@@ -94,12 +82,19 @@ const menuToggle = document.getElementById('menu-toggle');
           .join(' '); // Join the words back into a single string
     }
 
-    function saveLobby() {
-      const value = document.getElementById("lobbyInput").value;
+    function newLobbyScreen(){
+      inLobby = true;
+      document.getElementById("lobbyInput").value = "";
+      document.getElementById("lobby-interface").style.display = "none";
+      document.getElementById("lobby-interface2").style.display = "block";
+      document.getElementById("lobby-title").innerHTML = "<em>Lobby: </em><strong>" + sessionStorage.getItem("lobbyName") + "</strong>";
+    }
+
+    function saveLobby(lobbyName) {
+      const value = lobbyName || document.getElementById("lobbyInput").value;
       if (value.trim()) {
         sessionStorage.setItem("lobbyName", value);
         alert(`You've joined lobby "${value}"`);
-        closeModal();
         
         removeInactiveUsers(value);
 
@@ -109,7 +104,7 @@ const menuToggle = document.getElementById('menu-toggle');
             lastActive: firebase.firestore.Timestamp.now() // Use Firestore Timestamp
         })
         .then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
+          newLobbyScreen();
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
@@ -123,20 +118,65 @@ const menuToggle = document.getElementById('menu-toggle');
     }
 
     function displayUsers(lobbyName) {
-      const userList = document.getElementById("userList");
+      const userList = document.getElementById("lobby-users");
       userList.innerHTML = `<h3>Users in ${lobbyName}</h3>`;
       userList.style.display = "block";
+    
+      db.collection("lobbies")
+        .where("lobbyName", "==", lobbyName)
+        .onSnapshot((querySnapshot) => {
+          userList.innerHTML = `<h3>Users in ${lobbyName}</h3><ul>`;
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            userList.innerHTML += `
+              <li class="user-item">
+                <span class="user-name">
+                  <span class="status-dot"></span> ${data.user}
+                </span>
+              </li>`;
+          });
+          userList.innerHTML += `</ul>`;
+        });
+    }
+    
+    /**async function getUsers(lobbyName) {
+      const returnUsers = [];
 
-      db.collection("lobbies").where("lobbyName", "==", lobbyName).onSnapshot((querySnapshot) => {
-        userList.innerHTML = `<h3>Users in ${lobbyName}</h3><ul>`;
+      try {
+        const querySnapshot = await db.collection("lobbies").where("lobbyName", "==", lobbyName).get();
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          userList.innerHTML += `<li>${data.user}</li>`;
+          returnUsers.push(data.user);
+          console.log("User in lobby:", data.user);
         });
-        userList.innerHTML += `</ul>`;
-      });
-    } 
 
+        console.log("Return users FINAL:", returnUsers.join(", "));
+        return returnUsers.join(", ");
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        return ""; // Return an empty string in case of an error
+      }
+    } **/
+
+    function displayLobbies() {
+      const lobbyData = {}; // Store lobbies and their users in an object
+
+      db.collection("lobbies").onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!lobbyData[data.lobbyName]) {
+            lobbyData[data.lobbyName] = [];
+          }
+          if (!lobbyData[data.lobbyName].includes(data.user)) {
+            lobbyData[data.lobbyName].push(data.user);
+          }
+        });
+
+        // Debounce the UI update
+        debounceUpdateLobbies(lobbyData);
+      });
+    }
+    
     function displayLeaderboard() {
         db.collection("leaderboard").onSnapshot((querySnapshot) => {
           var leaderboard = [];
@@ -157,10 +197,10 @@ const menuToggle = document.getElementById('menu-toggle');
           }
           leaderboard = sortedLeaderboard;
           
-          document.getElementById("p1").innerHTML = leaderboard[0].points;
-          document.getElementById("p2").innerHTML = leaderboard[1].points;
-          document.getElementById("p3").innerHTML = leaderboard[2].points;
-          document.getElementById("p4").innerHTML = leaderboard[3].points;
+          document.getElementById("p1").innerHTML = leaderboard[0].points + " pts";
+          document.getElementById("p2").innerHTML = leaderboard[1].points + " pts";
+          document.getElementById("p3").innerHTML = leaderboard[2].points + " pts";
+          document.getElementById("p4").innerHTML = leaderboard[3].points + " pts";
 
           document.getElementById("u1").innerHTML = leaderboard[0].user;
           document.getElementById("u2").innerHTML = leaderboard[1].user;
@@ -170,13 +210,6 @@ const menuToggle = document.getElementById('menu-toggle');
         
       } 
       displayLeaderboard();
-
-      function displayName() {
-        nameList.innerHTML = `<h3>Logged in as:</h3>`;
-        nameList.style.display = "block";
-        nameList.innerHTML += `<p>${localStorage.getItem("userName")}</p>`;
-      } 
-      displayName();
 
     function updateLastActive(lobbyName, userName) {
         const userRef = db.collection("lobbies").where("lobbyName", "==", lobbyName).where("user", "==", userName);
@@ -192,42 +225,89 @@ const menuToggle = document.getElementById('menu-toggle');
         });
     }
 
-    // Call this function every minute
+    function updateLastActiveBatch(lobbyName, userName) {
+      const batch = db.batch();
+      const userRef = db.collection("lobbies").where("lobbyName", "==", lobbyName).where("user", "==", userName);
+    
+      userRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          batch.update(doc.ref, {
+            lastActive: firebase.firestore.Timestamp.now(),
+          });
+        });
+    
+        batch.commit().catch((error) => {
+          console.error("Error updating last active timestamps:", error);
+        });
+      });
+    }
+
+    db.collection("lobbies").get().then((querySnapshot) => {
+        displayLobbies();
+    })
+    .catch((error) => {
+      console.error("Error querying inactive users: ", error);
+    });
+
+
+    
     setInterval(() => {
         const lobbyName = sessionStorage.getItem("lobbyName");
         const userName = localStorage.getItem("userName"); // Store the user's name in localStorage
         if (lobbyName !== null && userName !== null) {
             updateLastActive(lobbyName, userName);
         }
-    }, 60000);
+    }, 3000); // Every 3 seconds
 
-    function removeInactiveUsers(lobbyName) {
-        const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 2 * 60 * 1000)); // 5 minutes ago
-        console.log("Threshold for inactivity:", threshold.toDate());
+function removeInactiveUsers() {
+  const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 1000)); // 5 seconds ago
 
-        db.collection("lobbies")
-            .where("lastActive", "<", threshold)
-            .get()
-            .then((querySnapshot) => {
-                console.log(`Found ${querySnapshot.size} inactive users.`);
-                querySnapshot.forEach((doc) => {
-                    console.log("Removing user:", doc.data());
-                    doc.ref.delete().then(() => {
-                        console.log(`Removed inactive user: ${doc.data().user}`);
-                    }).catch((error) => {
-                        console.error("Error removing inactive user: ", error);
-                    });
-                });
-            })
-            .catch((error) => {
-                console.error("Error querying inactive users: ", error);
-            });
-    }
-
-    // Call this function periodically
-    setInterval(() => {
-        const lobbyName = sessionStorage.getItem("lobbyName");
-        if (lobbyName) {
-            removeInactiveUsers(lobbyName);
+  db.collection("lobbies")
+    .where("lastActive", "<", threshold)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        if(inLobby){
+          displayUsers();
+        } else{
+          displayLobbies();
         }
-    }, 120000); // Check every 6 seconds
+        console.log("Inactive user found:", doc.data());
+        doc.ref.delete().catch((error) => {
+          console.error("Error removing inactive user:", error);
+        });
+      });
+    })
+    .catch((error) => {
+      console.error("Error querying inactive users:", error);
+    });
+}
+
+// Call this function periodically
+setInterval(() => {
+  removeInactiveUsers();
+}, 5000); // Every 5 seconds
+
+let updateTimeout;
+function debounceUpdateLobbies(lobbyData) {
+  clearTimeout(updateTimeout);
+  updateTimeout = setTimeout(() => {
+    const lobbyList = document.getElementById("lobby-list");
+    const lobbyUsers = document.getElementById("lobby-users");
+    if(!inLobby){
+      lobbyList.innerHTML = `<h3>Active Lobbies</h3><ul>`;
+      Object.keys(lobbyData).forEach((lobbyName) => {
+        const users = lobbyData[lobbyName].join(", ");
+        if(!inLobby){
+          lobbyList.innerHTML += `
+            <li class="list-item">
+              <span><em>Lobby Name: </em><strong>${lobbyName}</strong></span>
+              <button class="join-lobby" onclick="saveLobby('${lobbyName}')">Join Lobby</button>
+            </li>
+              <p class="info"><em>Users: </em><strong>${users}</strong></p>`;
+        }
+      });
+      lobbyList.innerHTML += `</ul><br><br>`;
+    }
+  }, 500); // Update the UI at most every 500ms
+}
