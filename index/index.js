@@ -102,33 +102,38 @@ const lobbyBox = document.getElementById('lobby-box');
         .where("lobbyName", "==", value)
         .get()
         .then((querySnapshot) => {
-          // Lobby is new, proceed to create it
-            sessionStorage.setItem("lobbyName", value);
+          let randomSeed;
     
-            var randomSeed;
-
-            if(querySnapshot.empty) {
-              randomSeed = Math.floor(Math.random() * 1000000); // Generate a random seed
-            } else{
-              randomSeed = doc.data().randomSeed;
-            }
-
-            sessionStorage.setItem("randomSeed", randomSeed);
-
-            db.collection("lobbies")
-              .add({
-                lobbyName: value,
-                user: localStorage.getItem("userName"),
-                lastActive: firebase.firestore.Timestamp.now(), // Use Firestore Timestamp
-                randomSeed: randomSeed,
-              })
-              .then(() => {
-                newLobbyScreen();
-                displayUsers(value);
-              })
-              .catch((error) => {
-                console.error("Error creating lobby: ", error);
-              });
+          if (!querySnapshot.empty) {
+            // Lobby already exists, retrieve its seed
+            const existingLobby = querySnapshot.docs[0].data();
+            randomSeed = existingLobby.randomSeed;
+            console.log(`Lobby "${value}" already exists with seed: ${randomSeed}`);
+          } else {
+            // Lobby is new, generate a random seed
+            randomSeed = Math.floor(Math.random() * 1000000); // Generate a random seed
+            console.log(`Creating new lobby "${value}" with seed: ${randomSeed}`);
+          }
+    
+          // Store the lobby name and seed in sessionStorage
+          sessionStorage.setItem("lobbyName", value);
+          sessionStorage.setItem("randomSeed", randomSeed);
+    
+          // Add the user to the lobby
+          db.collection("lobbies")
+            .add({
+              lobbyName: value,
+              user: localStorage.getItem("userName"),
+              lastActive: firebase.firestore.Timestamp.now(), // Use Firestore Timestamp
+              randomSeed: randomSeed,
+            })
+            .then(() => {
+              newLobbyScreen();
+              displayUsers(value);
+            })
+            .catch((error) => {
+              console.error("Error creating or joining lobby: ", error);
+            });
         })
         .catch((error) => {
           console.error("Error checking lobby existence: ", error);
