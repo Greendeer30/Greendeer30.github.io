@@ -39,10 +39,10 @@
         var rand;
 
         function setRandom(){
-            if(sessionStorage.getItem("lobbyName") == null){
+            if(sessionStorage.getItem("randomSeed") == null){
                 seed = cyrb128(String(Math.random() * 10000));
             } else{
-                seed = cyrb128(String(sessionStorage.getItem("lobbyName")));
+                seed = cyrb128(String(sessionStorage.getItem("randomSeed")));
             }
             rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
             console.log(rand());

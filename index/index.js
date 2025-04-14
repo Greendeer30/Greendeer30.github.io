@@ -91,30 +91,48 @@ const lobbyBox = document.getElementById('lobby-box');
     }
 
     function saveLobby(lobbyName) {
-      const value = lobbyName || document.getElementById("lobbyInput").value;
-      if (value.trim()) {
-        sessionStorage.setItem("lobbyName", value);
-        alert(`You've joined lobby "${value}"`);
-        
-        removeInactiveUsers(value);
+      const value = lobbyName || document.getElementById("lobbyInput").value.trim();
+      if (!value) {
+        alert("Please enter a lobby name.");
+        return;
+      }
+    
+      // Check if the lobby already exists
+      db.collection("lobbies")
+        .where("lobbyName", "==", value)
+        .get()
+        .then((querySnapshot) => {
+          // Lobby is new, proceed to create it
+            sessionStorage.setItem("lobbyName", value);
+    
+            var randomSeed;
 
-        db.collection("lobbies").add({
-            lobbyName: value,
-            user: localStorage.getItem("userName"),
-            lastActive: firebase.firestore.Timestamp.now() // Use Firestore Timestamp
-        })
-        .then((docRef) => {
-          newLobbyScreen();
+            if(querySnapshot.empty) {
+              randomSeed = Math.floor(Math.random() * 1000000); // Generate a random seed
+            } else{
+              randomSeed = doc.data().randomSeed;
+            }
+
+            sessionStorage.setItem("randomSeed", randomSeed);
+
+            db.collection("lobbies")
+              .add({
+                lobbyName: value,
+                user: localStorage.getItem("userName"),
+                lastActive: firebase.firestore.Timestamp.now(), // Use Firestore Timestamp
+                randomSeed: randomSeed,
+              })
+              .then(() => {
+                newLobbyScreen();
+                displayUsers(value);
+              })
+              .catch((error) => {
+                console.error("Error creating lobby: ", error);
+              });
         })
         .catch((error) => {
-            console.error("Error adding document: ", error);
+          console.error("Error checking lobby existence: ", error);
         });
-
-        displayUsers(value);
-
-      } else {
-        alert("Please enter a lobby name.");
-      }
     }
 
     function displayUsers(lobbyName) {
@@ -268,7 +286,7 @@ function removeInactiveUsers() {
     .then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         if(inLobby){
-          displayUsers(localStorage.getItem("lobbyName"));
+          displayUsers(sessionStorage.getItem("lobbyName"));
         } else{
           displayLobbies();
         }
