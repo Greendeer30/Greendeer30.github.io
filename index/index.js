@@ -186,22 +186,69 @@ function displayUsers(lobbyName) {
 } **/
 
 function displayLobbies() {
-  const lobbyData = {}; // Store lobbies and their users in an object
+  const lobbyList = document.getElementById("lobby-list");
+  lobbyList.innerHTML = `<h3>Loading Active Lobbies...</h3>`;
 
   db.collection("lobbies").onSnapshot((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      if (!lobbyData[data.lobbyName]) {
-        lobbyData[data.lobbyName] = [];
-      }
-      if (!lobbyData[data.lobbyName].includes(data.user)) {
-        lobbyData[data.lobbyName].push(data.user);
-      }
-    });
+    const lobbyData = {}; // Store lobbies and their users in an object
 
-    // Debounce the UI update
-    debounceUpdateLobbies(lobbyData);
+    querySnapshot.forEach((doc) => {
+      const lobbyName = doc.id; // Use the document ID as the lobby name
+      const lobbyInfo = doc.data();
+
+      // Initialize the lobby in the lobbyData object
+      if (!lobbyData[lobbyName]) {
+        lobbyData[lobbyName] = {
+          users: [],
+          randomSeed: lobbyInfo.randomSeed || "N/A",
+        };
+      }
+
+      // Fetch users in the lobby's users subcollection
+      db.collection("lobbies")
+        .doc(lobbyName)
+        .collection("users")
+        .get()
+        .then((usersSnapshot) => {
+          const users = [];
+          usersSnapshot.forEach((userDoc) => {
+            const userData = userDoc.data();
+            if (userData.userName) {
+              users.push(userData.userName);
+            }
+          });
+
+          // Update the lobbyData object with the users
+          lobbyData[lobbyName].users = users;
+
+          // Update the UI
+          updateLobbyListUI(lobbyData);
+        })
+        .catch((error) => {
+          console.error(`Error fetching users for lobby "${lobbyName}":`, error);
+        });
+    });
   });
+}
+
+function updateLobbyListUI(lobbyData) {
+  const lobbyList = document.getElementById("lobby-list");
+  lobbyList.innerHTML = `<h3>Active Lobbies</h3><ul>`;
+
+  Object.keys(lobbyData).forEach((lobbyName) => {
+    const users = lobbyData[lobbyName].users.join(", ");
+    const randomSeed = lobbyData[lobbyName].randomSeed;
+
+    lobbyList.innerHTML += `
+      <li class="list-item">
+        <span><em>Lobby Name: </em><strong>${lobbyName}</strong></span>
+        <button class="join-lobby" onclick="saveLobby('${lobbyName}')">Join Lobby</button>
+      </li>
+        <p class="info"><em>Users: </em><strong>${users}</strong></p>
+        <p class="info"><em>Seed: </em><strong>${randomSeed}</strong></p>`;
+  });
+
+  lobbyList.innerHTML += `</ul>`;
 }
 
 function displayLeaderboard() {
@@ -359,3 +406,42 @@ function debounceUpdateLobbies(lobbyData) {
     }
   }, 500); // Update the UI at most every 500ms
 }
+
+// Check if the user is already in a lobby on page load
+window.addEventListener("load", () => {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+  if (lobbyName) {
+    console.log(`User is already in lobby: ${lobbyName}`);
+    newLobbyScreen(); // Redirect to the lobby screen
+    displayUsers(lobbyName); // Display the users in the lobby
+  }
+});
+
+// Check if the user is already in a lobby based on Firestore data
+window.addEventListener("load", () => {
+  const userName = localStorage.getItem("userName");
+  if (!userName) {
+    console.error("User name is not set in localStorage.");
+    return;
+  }
+
+  db.collection("lobbies").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const lobbyName = doc.id; // Use the document ID as the lobby name
+      const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
+
+      usersRef.where("userName", "==", userName).get().then((userSnapshot) => {
+        if (!userSnapshot.empty) {
+          console.log(`User "${userName}" is already in lobby: ${lobbyName}`);
+          sessionStorage.setItem("lobbyName", lobbyName); // Save the lobby name in sessionStorage
+          newLobbyScreen(); // Redirect to the lobby screen
+          displayUsers(lobbyName); // Display the users in the lobby
+        }
+      }).catch((error) => {
+        console.error(`Error checking users in lobby "${lobbyName}":`, error);
+      });
+    });
+  }).catch((error) => {
+    console.error("Error fetching lobbies:", error);
+  });
+});
