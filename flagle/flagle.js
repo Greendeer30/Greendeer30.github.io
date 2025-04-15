@@ -162,7 +162,7 @@ function uncover() {
     var done = false;
     
     while(!done){
-        var random = Math.floor(rand() * 6);
+        var random = Math.floor(Math.random() * 6);
 
         if(cover[random] == true){
             var coverId = "cover" + String(random + 1);
@@ -278,6 +278,20 @@ function updateDisplay() {
     document.getElementById("accuracy").textContent = accuracy + "%";
 }
 
+async function addLeader(){
+    await db.collection("leaderboard").add({
+        user: localStorage.getItem("userName"),
+        points: correctGuesses,
+        uid: auth.currentUser.uid
+    })
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+    });
+}
+
 function startTimer() {
     if (timerRunning) return; // Prevent multiple intervals
     timerRunning = true;
@@ -300,17 +314,7 @@ function startTimer() {
             document.getElementById("timer").textContent = "Time's up!";
             document.getElementById("guessContainer").style.display = "none";
 
-            db.collection("leaderboard").add({
-                user: localStorage.getItem("userName"),
-                points: correctGuesses,
-                uid: auth.currentUser.uid
-            })
-            .then((docRef) => {
-                console.log("Document written with ID: ", docRef.id);
-            })
-            .catch((error) => {
-                console.error("Error adding document: ", error);
-            });
+            addLeader();
 
             timerRunning = false;
         }
@@ -321,7 +325,7 @@ function startTimer() {
 
 function resetTimer() {
     clearInterval(countdown);
-    timeLeft = 180; // Reset to 3 minutes
+    timeLeft = 1; // Reset to 3 minutes
     document.getElementById("timer").textContent = "3:00";
     timerRunning = false;
     document.getElementById("guessContainer").style.display = "none";
