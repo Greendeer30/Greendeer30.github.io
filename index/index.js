@@ -104,6 +104,8 @@ function saveLobby(lobbyName) {
     return;
   }
 
+  sessionStorage.setItem("lobbyName", lobbyName);
+
   const lobbyRef = db.collection("lobbies").doc(value);
 
   lobbyRef.get().then((doc) => {
@@ -383,29 +385,7 @@ setInterval(() => {
   }
 }, 5000); // Every 5 seconds
 
-let updateTimeout;
-function debounceUpdateLobbies(lobbyData) {
-  clearTimeout(updateTimeout);
-  updateTimeout = setTimeout(() => {
-    const lobbyList = document.getElementById("lobby-list");
-    const lobbyUsers = document.getElementById("lobby-users");
-    if (!inLobby) {
-      lobbyList.innerHTML = `<h3>Active Lobbies</h3><ul>`;
-      Object.keys(lobbyData).forEach((lobbyName) => {
-        const users = lobbyData[lobbyName].join(", ");
-        if (!inLobby) {
-          lobbyList.innerHTML += `
-            <li class="list-item">
-              <span><em>Lobby Name: </em><strong>${lobbyName}</strong></span>
-              <button class="join-lobby" onclick="saveLobby('${lobbyName}')">Join Lobby</button>
-            </li>
-              <p class="info"><em>Users: </em><strong>${users}</strong></p>`;
-        }
-      });
-      lobbyList.innerHTML += `</ul><br><br>`;
-    }
-  }, 500); // Update the UI at most every 500ms
-}
+
 
 // Check if the user is already in a lobby on page load
 window.addEventListener("load", () => {
@@ -445,3 +425,35 @@ window.addEventListener("load", () => {
     console.error("Error fetching lobbies:", error);
   });
 });
+
+function leaveLobby() {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+  const userName = localStorage.getItem("userName");
+
+  if (!lobbyName || !userName) {
+    console.error("Lobby name or user name is missing.");
+    return;
+  }
+
+  const userRef = db.collection("lobbies").doc(lobbyName).collection("users").doc(userName);
+
+  // Remove the user from the lobby's users subcollection
+  userRef.delete()
+    .then(() => {
+      console.log(`User "${userName}" has left the lobby "${lobbyName}".`);
+      sessionStorage.removeItem("lobbyName"); // Clear the lobby name from sessionStorage
+      inLobby = false; // Update the inLobby state
+
+      // Reset the UI to the default state
+      document.getElementById("lobby-interface").style.display = "block";
+      document.getElementById("lobby-interface2").style.display = "none";
+      document.getElementById("lobby-title").innerHTML = "";
+      document.getElementById("lobby-users").innerHTML = "";
+
+      // Optionally refresh the lobby list
+      displayLobbies();
+    })
+    .catch((error) => {
+      console.error("Error leaving the lobby:", error);
+    });
+}

@@ -36,7 +36,7 @@
           <h2 id="user-info-header">User Info</h2>
           <p id="user-info">User details go here.</p>
           <br>
-          <button id="sign-out" onClick="SignOut()">Log Out</button>
+          <button id="sign-out" class="long" onClick="SignOut()">Log Out</button>
         </div>
 
         <div class="leaderboard fade-in">
@@ -82,6 +82,10 @@
           </center>
 
           <div id="lobby-users"></div>
+          <div id="lobby-actions">
+            <button id="start-game" class="long" onclick="startGame()">Start Game</button>
+            <button id="leave-lobby" class="long" onclick="leaveLobby()">Leave Lobby</button>
+          </div>
         </div>
       </div>
     </div>
