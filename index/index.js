@@ -314,7 +314,7 @@ setInterval(() => {
 */
 
 function removeInactiveUsers(lobbyName) {
-  const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 1000)); // 5 minutes ago
+  const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 10 * 1000)); // 5 minutes ago
   const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
 
   usersRef.where("lastActive", "<", threshold).get().then((querySnapshot) => {
