@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Website</title>
   <link rel="stylesheet" href="./index/index.css" />
 </head>
+
 <body>
   <div id="background-container"></div>
 
@@ -36,35 +38,37 @@
           <br>
           <button id="sign-out" onClick="SignOut()">Log Out</button>
         </div>
-          
-          <div class="leaderboard fade-in">
-            <div class="leaderboard-header">🏆 Flagle Leaderboard</div>
-            <div class="leaderboard-entry top-entry">
-              <span class="rank">🥇</span>
-              <span class="name" id="u1"></span>
-              <span class="points" id="p1"></span>
-            </div>
-            <div class="leaderboard-entry">
-              <span class="rank">🥈</span>
-              <span class="name" id="u2"></span>
-              <span class="points" id="p2"></span>
-            </div>
-            <div class="leaderboard-entry">
-              <span class="rank">🥉</span>
-              <span class="name" id="u3"></span>
-              <span class="points" id="p3"></span>
-            </div>
-            <div class="leaderboard-entry">
-              <span class="rank">4</span>
-              <span class="name" id="u4"></span>
-              <span class="points" id="p4"></span>
-            </div>
+
+        <div class="leaderboard fade-in">
+          <div class="leaderboard-header">🏆 Flagle Leaderboard</div>
+          <div class="leaderboard-entry top-entry">
+            <span class="rank">🥇</span>
+            <span class="name" id="u1"></span>
+            <span class="points" id="p1"></span>
           </div>
+          <div class="leaderboard-entry">
+            <span class="rank">🥈</span>
+            <span class="name" id="u2"></span>
+            <span class="points" id="p2"></span>
+          </div>
+          <div class="leaderboard-entry">
+            <span class="rank">🥉</span>
+            <span class="name" id="u3"></span>
+            <span class="points" id="p3"></span>
+          </div>
+          <div class="leaderboard-entry">
+            <span class="rank">4</span>
+            <span class="name" id="u4"></span>
+            <span class="points" id="p4"></span>
+          </div>
+        </div>
       </div>
       <div class="box right" id="lobby-box">
         <div id="lobby-interface" class="fade-in">
-          <center><h2>Join a Lobby</h2></center>
-        
+          <center>
+            <h2>Join a Lobby</h2>
+          </center>
+
           <div id="lobby-list"></div>
 
           <div class="lobby-actions">
@@ -73,18 +77,20 @@
           </div>
         </div>
         <div id="lobby-interface2" class="fade-in">
-          <center><h2 id="lobby-title"></h2></center>
-        
+          <center>
+            <h2 id="lobby-title"></h2>
+          </center>
+
           <div id="lobby-users"></div>
-        </div>        
+        </div>
       </div>
     </div>
   </main>
 
   <div id="userList"></div>
 
-    <div id="nameList"></div>
-  
+  <div id="nameList"></div>
+
 
   <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
@@ -92,4 +98,5 @@
   <script src="universal/firebase.js"></script>
   <script src="./index/index.js"></script>
 </body>
+
 </html>

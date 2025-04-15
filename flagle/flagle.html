@@ -5,33 +5,33 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Flagle Unlimited</title>
-  <link href="./flagle.css" rel="stylesheet" type="text/css"/>
+  <link href="./flagle.css" rel="stylesheet" type="text/css" />
 </head>
 
-  <body>
+<body>
 
-    <div id="topBar">
-      <a href="../index.html" id="homeButton"> 🏠︎</a>
-      <span style="margin-left: 30px;" id="lobbyName"></span>
-    </div>   
-    
-    <div class="top-bar">FLAGLE UNLIMITED</div>
-    
-    <div class="content">
-        <p id="attempts">Attempts: 0/6</p>
-    </div>
+  <div id="topBar">
+    <a href="../index.html" id="homeButton"> 🏠︎</a>
+    <span style="margin-left: 30px;" id="lobbyName"></span>
+  </div>
 
-    <center>
+  <div class="top-bar">FLAGLE UNLIMITED</div>
+
+  <div class="content">
+    <p id="attempts">Attempts: 0/6</p>
+  </div>
+
+  <center>
     <div class="container" id="container">
       <img id="flag" src="../flags/ad.png">
-        <div class="overlay" id="overlay">
-            <div id="cover1"></div>
-            <div id="cover2"></div>
-            <div id="cover3"></div>
-            <div id="cover4"></div>
-            <div id="cover5"></div>
-            <div id="cover6"></div>
-        </div>
+      <div class="overlay" id="overlay">
+        <div id="cover1"></div>
+        <div id="cover2"></div>
+        <div id="cover3"></div>
+        <div id="cover4"></div>
+        <div id="cover5"></div>
+        <div id="cover6"></div>
+      </div>
     </div>
 
     <br><br>
@@ -39,30 +39,30 @@
       <input type="text" id="search" placeholder="Guess the Flag!">
       <div class="autocomplete-list" autocomplete="off" id="suggestions"></div>
     </div>
-    
+
     <br>
     <button id="nextButton" style.display="none">Next Flag ➡️</button>
     <br><br>
 
     <div id="floatingBanner" class="banner" onclick="hideBanner()"></div>
-      
-    </center>
 
-    <div class="score-box">
-      <p class="stat">Correct Guesses: <span id="correctGuesses">0</span></p>
-      <p class="stat">Accuracy: <span id="accuracy">0%</span></p>
-      <p class="stat timer">Time Left: <span id="timer">3:00</span></p>
-      <div class="button-container">
-          <button class="button" onclick="startTimer()">Start Timer</button>
-          <button class="button reset" onclick="resetTimer()">Reset Timer</button>
-      </div>
+  </center>
+
+  <div class="score-box">
+    <p class="stat">Correct Guesses: <span id="correctGuesses">0</span></p>
+    <p class="stat">Accuracy: <span id="accuracy">0%</span></p>
+    <p class="stat timer">Time Left: <span id="timer">3:00</span></p>
+    <div class="button-container">
+      <button class="button" onclick="startTimer()">Start Timer</button>
+      <button class="button reset" onclick="resetTimer()">Reset Timer</button>
+    </div>
 
 
-  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
-  <script src="../universal/firebase.js"></script>
-  <script src="./flagle.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-auth-compat.js"></script>
+    <script src="../universal/firebase.js"></script>
+    <script src="./flagle.js"></script>
 </body>
 
 </html>

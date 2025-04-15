@@ -5,24 +5,24 @@ const nations = ["Andorra", "United Arab Emirates (UAE)", "Afghanistan", "Antigu
 
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277,
-            h3 = 1013904242, h4 = 2773480762;
-        for (let i = 0, k; i < str.length; i++) {
-            k = str.charCodeAt(i);
-            h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-            h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-            h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-            h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
-        }
-        h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-        h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-        h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-        h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-        h1 ^= (h2 ^ h3 ^ h4), h2 ^= h1, h3 ^= h1, h4 ^= h1;
-        return [h1>>>0, h2>>>0, h3>>>0, h4>>>0];
+        h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0, k; i < str.length; i++) {
+        k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
     }
-    function sfc32(a, b, c, d) {
-        return function() {
-        a |= 0; b |= 0; c |= 0; d |= 0; 
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    h1 ^= (h2 ^ h3 ^ h4), h2 ^= h1, h3 ^= h1, h4 ^= h1;
+    return [h1 >>> 0, h2 >>> 0, h3 >>> 0, h4 >>> 0];
+}
+function sfc32(a, b, c, d) {
+    return function () {
+        a |= 0; b |= 0; c |= 0; d |= 0;
         var t = (a + b | 0) + d | 0;
         d = d + 1 | 0;
         a = b ^ b >>> 9;
@@ -30,23 +30,23 @@ function cyrb128(str) {
         c = (c << 21 | c >>> 11);
         c = c + t | 0;
         return (t >>> 0) / 4294967296;
-        }
     }
+}
 
-    var seed;
-    var rand;
+var seed;
+var rand;
 
-    function setRandom(){
-        if(sessionStorage.getItem("randomSeed") == null){
-            seed = cyrb128(String(Math.random() * 10000));
-        } else{
-            seed = cyrb128(String(sessionStorage.getItem("randomSeed")));
-        }
-        rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
-        console.log(rand());
+function setRandom() {
+    if (sessionStorage.getItem("randomSeed") == null) {
+        seed = cyrb128(String(Math.random() * 10000));
+    } else {
+        seed = cyrb128(String(sessionStorage.getItem("randomSeed")));
     }
-    
-    setRandom();
+    rand = sfc32(seed[0], seed[1], seed[2], seed[3]);
+    console.log(rand());
+}
+
+setRandom();
 
 var attempts = 0;
 
@@ -61,11 +61,11 @@ let countdown;
 let savedImages = [];
 
 const lobby = sessionStorage.getItem("lobbyName");
-    if (lobby) {
-        var newWidth = 50 + 75 + String(lobby).length * 10;
-        document.getElementById("topBar").style.width = String(newWidth) + "px";
-        document.getElementById("lobbyName").textContent = `Lobby: ${lobby}`;
-    }
+if (lobby) {
+    var newWidth = 50 + 75 + String(lobby).length * 10;
+    document.getElementById("topBar").style.width = String(newWidth) + "px";
+    document.getElementById("lobbyName").textContent = `Lobby: ${lobby}`;
+}
 
 // Preload images
 images.forEach((path, i) => {
@@ -73,7 +73,7 @@ images.forEach((path, i) => {
     savedImages[i].src = "../flags/" + path + ".png";
 });
 
-    
+
 
 images.forEach((src) => {
     const img = new Image();
@@ -84,9 +84,9 @@ let index = 0; // Track the current image
 
 document.getElementById("nextButton").style.visibility = "hidden";
 
-function moveOn(){
+function moveOn() {
 
-    if(!completed){
+    if (!completed) {
         return;
     }
 
@@ -102,21 +102,21 @@ function moveOn(){
     document.getElementById("attempts").textContent = "Attempts: " + attempts + "/6";
     hideBanner();
     recover();
-    
+
 
 }
 
-document.getElementById("nextButton").addEventListener("click", function() {
+document.getElementById("nextButton").addEventListener("click", function () {
     moveOn();
 });
 
 // Get the input field
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', function (event) {
     if (event.key === "Enter") {
-        if(completed){
+        if (completed) {
             document.getElementById("nextButton").click();
-        } else if(document.getElementById("search").value !== ""){
+        } else if (document.getElementById("search").value !== "") {
             uncover();
         }
     }
@@ -132,15 +132,15 @@ function uncover() {
 
     const matches = nations.filter(item => item.toLowerCase().includes(input));
 
-    if(!nations.includes(input)){
-        if(matches.length == 0){
+    if (!nations.includes(input)) {
+        if (matches.length == 0) {
             return;
-        } else{
+        } else {
             input = matches[0];
         }
     }
-    
-    if(input.toLowerCase() == nations[index].toLowerCase()){
+
+    if (input.toLowerCase() == nations[index].toLowerCase()) {
         correctGuesses++;
         totalGuesses++;
         updateDisplay();
@@ -157,14 +157,14 @@ function uncover() {
         document.getElementById("attempts").textContent = "Attempts: " + attempts + "/6";
         return;
     }
-    
-    
+
+
     var done = false;
-    
-    while(!done){
+
+    while (!done) {
         var random = Math.floor(Math.random() * 6);
 
-        if(cover[random] == true){
+        if (cover[random] == true) {
             var coverId = "cover" + String(random + 1);
             document.getElementById(coverId).style.opacity = 0;
             cover[random] = false;
@@ -175,7 +175,7 @@ function uncover() {
     attempts += 1;
     document.getElementById("attempts").textContent = "Attempts: " + attempts + "/6";
 
-    if(!cover.includes(true)){
+    if (!cover.includes(true)) {
         completed = true;
         totalGuesses++;
         updateDisplay();
@@ -184,7 +184,7 @@ function uncover() {
     }
 }
 
-function recover(){
+function recover() {
     document.getElementById("cover1").style.opacity = 1;
     document.getElementById("cover2").style.opacity = 1;
     document.getElementById("cover3").style.opacity = 1;
@@ -207,7 +207,7 @@ input.addEventListener("input", () => {
         input.value = ""; // Clear input if attempted
         return;
     }
-    
+
     const value = input.value.toLowerCase();
     suggestionsBox.innerHTML = "";
     selectedIndex = 0; // Reset selection on new input
@@ -224,11 +224,11 @@ input.addEventListener("input", () => {
             div.textContent = match;
             div.dataset.index = index;
             div.classList.add("autocomplete-item");
-            
-            if (index === 0){
+
+            if (index === 0) {
                 div.style.backgroundColor = "#bbb";
             }
-            
+
             div.addEventListener("click", () => {
                 input.value = match;
                 suggestionsBox.style.display = "none";
@@ -259,7 +259,7 @@ input.addEventListener("keydown", (e) => {
     });
 
     if (selectedIndex !== -1) {
-        items[selectedIndex].scrollIntoView({ block: "nearest"});
+        items[selectedIndex].scrollIntoView({ block: "nearest" });
     }
 });
 
@@ -278,18 +278,18 @@ function updateDisplay() {
     document.getElementById("accuracy").textContent = accuracy + "%";
 }
 
-async function addLeader(){
+async function addLeader() {
     await db.collection("leaderboard").add({
         user: localStorage.getItem("userName"),
         points: correctGuesses,
         uid: auth.currentUser.uid
     })
-    .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch((error) => {
-        console.error("Error adding document: ", error);
-    });
+        .then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
 }
 
 function startTimer() {
@@ -300,7 +300,7 @@ function startTimer() {
     correctGuesses = 0;
     totalGuesses = 0;
     updateDisplay();
-    
+
     document.getElementById("guessContainer").style.display = "block";
     document.getElementById("search").focus();
 
@@ -329,7 +329,7 @@ function resetTimer() {
     document.getElementById("timer").textContent = "3:00";
     timerRunning = false;
     document.getElementById("guessContainer").style.display = "none";
-    
+
 }
 
 
@@ -343,9 +343,9 @@ function showBanner(message, isCorrect) {
     var banner = document.getElementById("floatingBanner");
     banner.textContent = message;
     banner.classList.add("show");
-    if(isCorrect){
+    if (isCorrect) {
         banner.style.backgroundColor = "green";
-    } else{
+    } else {
         banner.style.backgroundColor = "red";
     }
 }
