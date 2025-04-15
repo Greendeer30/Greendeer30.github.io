@@ -239,14 +239,10 @@ function displayLeaderboard() {
 displayLeaderboard();
 
 function updateLastActive(lobbyName, userName) {
-  const userRef = db.collection("lobbies").where("lobbyName", "==", lobbyName).where("user", "==", userName);
+  const userRef = db.collection("lobbies").doc(lobbyName).collection("users").doc(userName);
 
-  userRef.get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      doc.ref.update({
-        lastActive: firebase.firestore.Timestamp.now()
-      });
-    });
+  userRef.update({
+    lastActive: firebase.firestore.Timestamp.now(),
   }).catch((error) => {
     console.error("Error updating last active timestamp: ", error);
   });
@@ -280,12 +276,13 @@ db.collection("lobbies").get().then((querySnapshot) => {
 
 setInterval(() => {
   const lobbyName = sessionStorage.getItem("lobbyName");
-  const userName = localStorage.getItem("userName"); // Store the user's name in localStorage
-  if (lobbyName !== null && userName !== null) {
+  const userName = localStorage.getItem("userName");
+  if (lobbyName && userName) {
     updateLastActive(lobbyName, userName);
   }
 }, 3000); // Every 3 seconds
 
+/*
 function removeInactiveUsers() {
   const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 1000)); // 5 seconds ago
 
@@ -314,6 +311,7 @@ function removeInactiveUsers() {
 setInterval(() => {
   removeInactiveUsers();
 }, 5000); // Every 5 seconds
+*/
 
 function removeInactiveUsers(lobbyName) {
   const threshold = firebase.firestore.Timestamp.fromDate(new Date(Date.now() - 5 * 60 * 1000)); // 5 minutes ago
@@ -322,10 +320,21 @@ function removeInactiveUsers(lobbyName) {
   usersRef.where("lastActive", "<", threshold).get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
       console.log("Removing inactive user:", doc.data().userName);
-      doc.ref.delete();
+      doc.ref.delete().catch((error) => {
+        console.error("Error removing inactive user:", error);
+      });
     });
+  }).catch((error) => {
+    console.error("Error querying inactive users:", error);
   });
 }
+
+setInterval(() => {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+  if (lobbyName) {
+    removeInactiveUsers(lobbyName);
+  }
+}, 5000); // Every 5 seconds
 
 let updateTimeout;
 function debounceUpdateLobbies(lobbyData) {
