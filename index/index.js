@@ -422,6 +422,7 @@ window.addEventListener("load", () => {
   if (lobbyName) {
     console.log(`User is already in lobby: ${lobbyName}`);
     newLobbyScreen(); // Redirect to the lobby screen
+    console.log(`User is already in lobby: ${lobbyName}`);
     displayUsers(lobbyName); // Display the users in the lobby
   }
 });
@@ -478,48 +479,11 @@ function startGame() {
     gameStarted: true, // Indicate that the game has started
   }).then(() => {
     console.log(`Game started for lobby "${lobbyName}".`);
-
-    // Retrieve all users in the lobby
-    const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
-    usersRef.get().then((querySnapshot) => {
-      const players = [];
-      querySnapshot.forEach((doc) => {
-        const userData = doc.data();
-        players.push(userData.userName); // Collect all player names
-
-        const userDocRef = db.collection("games").doc(lobbyName).collection("users").doc(userData.userName);
-
-        // Add each user to the game's users subcollection
-        userDocRef.set({
-          userName: userData.userName,
-          lastActive: firebase.firestore.Timestamp.now(),
-        }).then(() => {
-          console.log(`User "${userData.userName}" added to game "${lobbyName}".`);
-
-          // Save game info to localStorage for the current user
-          if (userData.userName === userName) {
-            localStorage.setItem("gameInfo", JSON.stringify({
-              lobbyName: lobbyName,
-              players: players,
-              createdAt: new Date().toISOString(),
-            }));
-
-            leaveLobby();
-
-            // Redirect the current user to the game page
-            window.location.href = "./flagle/tourney/flagleT.html"; // Replace with the actual game page URL
-          }
-        }).catch((error) => {
-          console.error(`Error adding user "${userData.userName}" to game:`, error);
-        });
-      });
-    }).catch((error) => {
-      console.error("Error retrieving users from lobby:", error);
-    });
   }).catch((error) => {
     console.error("Error starting game:", error);
   });
 }
+
 
 function listenForGameStart() {
   const lobbyName = sessionStorage.getItem("lobbyName");
@@ -538,28 +502,16 @@ function listenForGameStart() {
       if (gameData.gameStarted) {
         console.log(`Game started for lobby "${lobbyName}". Redirecting to game page.`);
 
-        // Save game info to localStorage
-        const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
-        usersRef.get().then((querySnapshot) => {
-          const players = [];
-          querySnapshot.forEach((userDoc) => {
-            const userData = userDoc.data();
-            players.push(userData.userName);
-          });
+        localStorage.setItem("gameInfo", JSON.stringify({
+          lobbyName: lobbyName,
+          createdAt: gameData.createdAt.toDate().toISOString()
+        }));
 
-          localStorage.setItem("gameInfo", JSON.stringify({
-            lobbyName: lobbyName,
-            players: players,
-            createdAt: gameData.createdAt.toDate().toISOString(),
-          }));
-
-          leaveLobby();
+          //leaveLobby();
 
           // Redirect the user to the game page
           window.location.href = "./flagle/tourney/flagleT.html"; // Replace with the actual game page URL
-        }).catch((error) => {
-          console.error("Error retrieving users for game info:", error);
-        });
+        
       }
     } else {
       console.error("Game document does not exist.");

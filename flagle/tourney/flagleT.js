@@ -1,7 +1,6 @@
-const lobbyName = sessionStorage.getItem("lobbyName");
 const userName = localStorage.getItem("userName");
-if(lobbyName == null || userName == null) {
-    //window.location.href = "../index.html";
+if(userName == null) {
+    window.location.href = "../../index.html";
 }
 
 const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
@@ -9,8 +8,9 @@ const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
 if (!gameInfo || !gameInfo.createdAt) {
   console.error("Game info or creation time is missing.");
   // Redirect to the main page if game info is missing
-  window.location.href = "../index.html";
+  window.location.href = "../../index.html";
 } else {
+    leaveLobby();
   console.log("Game Info:", gameInfo);
 
   // Calculate the target start time (10 seconds after lobby creation)
@@ -22,6 +22,7 @@ if (!gameInfo || !gameInfo.createdAt) {
   countdownBox.style.position = "fixed";
   countdownBox.style.top = "50%";
   countdownBox.style.left = "50%";
+  countdownBox.style.width = "100%";
   countdownBox.style.transform = "translate(-50%, -50%)";
   countdownBox.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
   countdownBox.style.color = "white";
@@ -110,13 +111,6 @@ let timerRunning = false;
 let countdown;
 
 let savedImages = [];
-
-const lobby = sessionStorage.getItem("lobbyName");
-if (lobby) {
-    var newWidth = 50 + 75 + String(lobby).length * 10;
-    document.getElementById("topBar").style.width = String(newWidth) + "px";
-    document.getElementById("lobbyName").textContent = `Lobby: ${lobby}`;
-}
 
 
 images.forEach((path, i) => {

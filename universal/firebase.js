@@ -3,14 +3,14 @@
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDOqTTkZoEFvmk8RD1-7gJyI3V8Ao-VlJs",
-    authDomain: "finaltest-80138.firebaseapp.com",
-    projectId: "finaltest-80138",
-    storageBucket: "finaltest-80138.firebasestorage.app",
-    messagingSenderId: "252001476022",
-    appId: "1:252001476022:web:d0f596f298252f558df517",
-    measurementId: "G-V7MBGT2T23"
-  };
+  apiKey: "AIzaSyDOqTTkZoEFvmk8RD1-7gJyI3V8Ao-VlJs",
+  authDomain: "finaltest-80138.firebaseapp.com",
+  projectId: "finaltest-80138",
+  storageBucket: "finaltest-80138.firebasestorage.app",
+  messagingSenderId: "252001476022",
+  appId: "1:252001476022:web:d0f596f298252f558df517",
+  measurementId: "G-V7MBGT2T23"
+};
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
@@ -55,7 +55,7 @@ async function insertUsername(userId) {
 
 
 
-function leaveLobby() {
+async function leaveLobby() {
   const lobbyName = sessionStorage.getItem("lobbyName");
   const userName = localStorage.getItem("userName");
 
@@ -64,28 +64,31 @@ function leaveLobby() {
     return;
   }
 
+  // Correctly reference the user's document in the "users" subcollection
   const userRef = db.collection("lobbies").doc(lobbyName).collection("users").doc(userName);
 
-  // Remove the user from the lobby's users subcollection
-  userRef.delete()
-    .then(() => {
-      console.log(`User "${userName}" has left the lobby "${lobbyName}".`);
-      sessionStorage.removeItem("lobbyName"); // Clear the lobby name from sessionStorage
-      inLobby = false; // Update the inLobby state
+  try {
+    console.log("Attempting to delete user document:", userRef.path);
 
-      // Reset the UI to the default state
-      document.getElementById("lobby-interface").style.display = "block";
-      document.getElementById("lobby-interface2").style.display = "none";
-      document.getElementById("lobby-title").innerHTML = "";
-      document.getElementById("lobby-users").innerHTML = "";
+    // Delete the user's document
+    await userRef.delete();
+    console.log(`User "${userName}" has left the lobby "${lobbyName}".`);
 
-      // Optionally refresh the lobby list
-      displayLobbies();
+    // Clear the lobby name from sessionStorage
+    sessionStorage.removeItem("lobbyName");
+    console.log("Lobby name removed from sessionStorage.");
 
-      // Check and remove empty lobbies
-      removeEmptyLobbies();
-    })
-    .catch((error) => {
-      console.error("Error leaving the lobby:", error);
-    });
+    // Update the UI or perform any additional cleanup
+    inLobby = false;
+    document.getElementById("lobby-interface").style.display = "block";
+    document.getElementById("lobby-interface2").style.display = "none";
+    document.getElementById("lobby-title").innerHTML = "";
+    document.getElementById("lobby-users").innerHTML = "";
+
+    // Optionally refresh the lobby list and remove empty lobbies
+    displayLobbies();
+    removeEmptyLobbies();
+  } catch (error) {
+    console.error("Error leaving the lobby:", error);
+  }
 }
