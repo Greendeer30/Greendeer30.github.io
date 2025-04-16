@@ -3,6 +3,33 @@ const randomImage = images[Math.floor(Math.random() * images.length)];
 const backgroundContainer = document.getElementById("background-container");
 
 
+const userName = localStorage.getItem("userName");
+  if (!userName) {
+    console.error("User name is not set in localStorage.");
+  } else{
+
+  db.collection("lobbies").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const lobbyName = doc.id; // Use the document ID as the lobby name
+      const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
+
+      usersRef.where("userName", "==", userName).get().then((userSnapshot) => {
+        if (!userSnapshot.empty) {
+          console.log(`User "${userName}" is already in lobby: ${lobbyName}`);
+          sessionStorage.setItem("lobbyName", lobbyName); // Save the lobby name in sessionStorage
+          newLobbyScreen(); // Redirect to the lobby screen
+          displayUsers(lobbyName); // Display the users in the lobby
+        }
+      }).catch((error) => {
+        console.error(`Error checking users in lobby "${lobbyName}":`, error);
+      });
+    });
+  }).catch((error) => {
+    console.error("Error fetching lobbies:", error);
+  });
+
+}
+
 // Set the CSS variable for the background image
 backgroundContainer.style.setProperty(
   "--background-image",
@@ -189,7 +216,7 @@ function displayUsers(lobbyName) {
 
 function displayLobbies() {
   const lobbyList = document.getElementById("lobby-list");
-  lobbyList.innerHTML = `<h3>Loading Active Lobbies...</h3>`;
+  lobbyList.innerHTML = `<h3>No Active Lobbies</h3><br><br>`;
 
   db.collection("lobbies").onSnapshot((querySnapshot) => {
     const lobbyData = {}; // Store lobbies and their users in an object
@@ -246,8 +273,7 @@ function updateLobbyListUI(lobbyData) {
         <span><em>Lobby Name: </em><strong>${lobbyName}</strong></span>
         <button class="join-lobby" onclick="saveLobby('${lobbyName}')">Join Lobby</button>
       </li>
-        <p class="info"><em>Users: </em><strong>${users}</strong></p>
-        <p class="info"><em>Seed: </em><strong>${randomSeed}</strong></p>`;
+        <p class="info"><em>Users: </em><strong>${users}</strong></p>`;
   });
 
   lobbyList.innerHTML += `</ul>`;
@@ -386,7 +412,6 @@ setInterval(() => {
 }, 5000); // Every 5 seconds
 
 
-
 // Check if the user is already in a lobby on page load
 window.addEventListener("load", () => {
   const lobbyName = sessionStorage.getItem("lobbyName");
@@ -395,35 +420,6 @@ window.addEventListener("load", () => {
     newLobbyScreen(); // Redirect to the lobby screen
     displayUsers(lobbyName); // Display the users in the lobby
   }
-});
-
-// Check if the user is already in a lobby based on Firestore data
-window.addEventListener("load", () => {
-  const userName = localStorage.getItem("userName");
-  if (!userName) {
-    console.error("User name is not set in localStorage.");
-    return;
-  }
-
-  db.collection("lobbies").get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const lobbyName = doc.id; // Use the document ID as the lobby name
-      const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
-
-      usersRef.where("userName", "==", userName).get().then((userSnapshot) => {
-        if (!userSnapshot.empty) {
-          console.log(`User "${userName}" is already in lobby: ${lobbyName}`);
-          sessionStorage.setItem("lobbyName", lobbyName); // Save the lobby name in sessionStorage
-          newLobbyScreen(); // Redirect to the lobby screen
-          displayUsers(lobbyName); // Display the users in the lobby
-        }
-      }).catch((error) => {
-        console.error(`Error checking users in lobby "${lobbyName}":`, error);
-      });
-    });
-  }).catch((error) => {
-    console.error("Error fetching lobbies:", error);
-  });
 });
 
 function leaveLobby() {
@@ -452,8 +448,43 @@ function leaveLobby() {
 
       // Optionally refresh the lobby list
       displayLobbies();
+
+      // Check and remove empty lobbies
+      removeEmptyLobbies();
     })
     .catch((error) => {
       console.error("Error leaving the lobby:", error);
     });
 }
+
+function removeEmptyLobbies() {
+  db.collection("lobbies").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      const lobbyName = doc.id; // Use the document ID as the lobby name
+      const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
+
+      // Check if the users subcollection is empty
+      usersRef.get().then((usersSnapshot) => {
+        if (usersSnapshot.empty) {
+          updateLobbyListUI();
+          console.log(`Removing empty lobby: ${lobbyName}`);
+          doc.ref.delete().catch((error) => {
+            console.error(`Error removing empty lobby "${lobbyName}":`, error);
+          });
+        }
+      }).catch((error) => {
+        doc.ref.delete().catch((error) => {
+          console.error(`Error removing empty lobby "${lobbyName}":`, error);
+        });
+      });
+    });
+  }).catch((error) => {
+    console.error("Error fetching lobbies:", error);
+  });
+}
+
+removeEmptyLobbies();
+
+setInterval(() => {
+  removeEmptyLobbies();
+}, 60000); // Every minute
