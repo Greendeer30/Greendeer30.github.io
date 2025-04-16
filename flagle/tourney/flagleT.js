@@ -348,7 +348,7 @@ async function addLeader() {
   }
 }
 
-async function showLeaderboard() {
+function showLeaderboard() {
   const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
   const lobbyName = gameInfo?.lobbyName;
 
@@ -357,50 +357,48 @@ async function showLeaderboard() {
     return;
   }
 
-  try {
-    // Retrieve leaderboard data from the game's leaderboard subcollection
-    const snapshot = await db
-      .collection("games")
-      .doc(lobbyName)
-      .collection("leaderboard")
-      .orderBy("points", "desc")
-      .limit(10)
-      .get();
+  // Get the leaderboard div
+  const leaderboardDiv = document.querySelector(".leaderboard");
 
-    // Clear existing leaderboard entries
-    const leaderboardDiv = document.querySelector(".leaderboard");
-    leaderboardDiv.innerHTML = `
-      <div class="leaderboard-header">🏆 Leaderboard</div>
-    `;
-
-    let rank = 1;
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-
-      // Create a new leaderboard entry
-      const entry = document.createElement("div");
-      entry.classList.add("leaderboard-entry");
-      if (rank === 1) entry.classList.add("top-entry"); // Highlight the top entry
-      entry.innerHTML = `
-        <span class="rank">${rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank}</span>
-        <span class="name">${data.user}</span>
-        <span class="points">${data.points}</span>
+  // Set up a Firestore snapshot listener
+  db.collection("games")
+    .doc(lobbyName)
+    .collection("leaderboard")
+    .orderBy("points", "desc")
+    .onSnapshot((snapshot) => {
+      // Clear existing leaderboard entries
+      leaderboardDiv.innerHTML = `
+        <div class="leaderboard-header">🏆 Leaderboard</div>
       `;
-      leaderboardDiv.appendChild(entry);
-      rank++;
+
+      let rank = 1;
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+
+        // Create a new leaderboard entry
+        const entry = document.createElement("div");
+        entry.classList.add("leaderboard-entry");
+        if (rank === 1) entry.classList.add("top-entry"); // Highlight the top entry
+        entry.innerHTML = `
+          <span class="rank">${rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank}</span>
+          <span class="name">${data.user}</span>
+          <span class="points">${data.points}</span>
+        `;
+        leaderboardDiv.appendChild(entry);
+        rank++;
+      });
+
+      // Add a "Play Again" button if it doesn't already exist
+      if (!leaderboardDiv.querySelector("button")) {
+        const playAgainButton = document.createElement("center");
+        playAgainButton.innerHTML = `<button onclick="restartGame()">Play Again</button>`;
+        leaderboardDiv.appendChild(playAgainButton);
+      }
+
+      // Show the leaderboard
+      leaderboardDiv.style.display = "block";
+      document.getElementById("guessContainer").style.display = "none"; // Hide the game container
     });
-
-    // Add a "Play Again" button
-    const playAgainButton = document.createElement("center");
-    playAgainButton.innerHTML = `<button onclick="restartGame()">Play Again</button>`;
-    leaderboardDiv.appendChild(playAgainButton);
-
-    // Show the leaderboard
-    leaderboardDiv.style.display = "block";
-    document.getElementById("guessContainer").style.display = "none"; // Hide the game container
-  } catch (error) {
-    console.error("Error retrieving leaderboard data:", error);
-  }
 }
 
 async function cleanupGame() {

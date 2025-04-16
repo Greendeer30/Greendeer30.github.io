@@ -477,6 +477,8 @@ function startGame() {
     createdAt: firebase.firestore.Timestamp.now(),
     lastUpdated: firebase.firestore.Timestamp.now(),
     gameStarted: true, // Indicate that the game has started
+    gameTime: document.getElementById("time-value").textContent,
+    gameTime2: document.getElementById("time-slider").value
   }).then(() => {
     console.log(`Game started for lobby "${lobbyName}".`);
   }).catch((error) => {
@@ -504,8 +506,8 @@ function listenForGameStart() {
         localStorage.setItem("gameInfo", JSON.stringify({
           lobbyName: lobbyName,
           createdAt: gameData.createdAt.toDate().toISOString(),
-          gameTime: document.getElementById("time-value").textContent,
-          gameTime2: document.getElementById("time-slider").value
+          gameTime: gameData.gameTime,
+          gameTime2: gameData.gameTime2
         }));
 
           //leaveLobby();
