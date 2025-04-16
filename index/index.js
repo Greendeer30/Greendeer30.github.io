@@ -17,6 +17,7 @@ const userName = localStorage.getItem("userName");
         if (!userSnapshot.empty) {
           console.log(`User "${userName}" is already in lobby: ${lobbyName}`);
           sessionStorage.setItem("lobbyName", lobbyName); // Save the lobby name in sessionStorage
+          listenForGameStart();
           newLobbyScreen(); // Redirect to the lobby screen
           displayUsers(lobbyName); // Display the users in the lobby
         }
@@ -132,6 +133,7 @@ function saveLobby(lobbyName) {
   }
 
   sessionStorage.setItem("lobbyName", value);
+  listenForGameStart();
 
   const lobbyRef = db.collection("lobbies").doc(value);
 
@@ -208,6 +210,7 @@ function displayUsers(lobbyName) {
 
     console.log("Return users FINAL:", returnUsers.join(", "));
     return returnUsers.join(", ");
+
   } catch (error) {
     console.error("Error fetching users:", error);
     return ""; // Return an empty string in case of an error
@@ -423,41 +426,6 @@ window.addEventListener("load", () => {
   }
 });
 
-function leaveLobby() {
-  const lobbyName = sessionStorage.getItem("lobbyName");
-  const userName = localStorage.getItem("userName");
-
-  if (!lobbyName || !userName) {
-    console.error("Lobby name or user name is missing.");
-    return;
-  }
-
-  const userRef = db.collection("lobbies").doc(lobbyName).collection("users").doc(userName);
-
-  // Remove the user from the lobby's users subcollection
-  userRef.delete()
-    .then(() => {
-      console.log(`User "${userName}" has left the lobby "${lobbyName}".`);
-      sessionStorage.removeItem("lobbyName"); // Clear the lobby name from sessionStorage
-      inLobby = false; // Update the inLobby state
-
-      // Reset the UI to the default state
-      document.getElementById("lobby-interface").style.display = "block";
-      document.getElementById("lobby-interface2").style.display = "none";
-      document.getElementById("lobby-title").innerHTML = "";
-      document.getElementById("lobby-users").innerHTML = "";
-
-      // Optionally refresh the lobby list
-      displayLobbies();
-
-      // Check and remove empty lobbies
-      removeEmptyLobbies();
-    })
-    .catch((error) => {
-      console.error("Error leaving the lobby:", error);
-    });
-}
-
 function removeEmptyLobbies() {
   db.collection("lobbies").get().then((querySnapshot) => {
     querySnapshot.forEach((doc) => {
@@ -514,8 +482,11 @@ function startGame() {
     // Retrieve all users in the lobby
     const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
     usersRef.get().then((querySnapshot) => {
+      const players = [];
       querySnapshot.forEach((doc) => {
         const userData = doc.data();
+        players.push(userData.userName); // Collect all player names
+
         const userDocRef = db.collection("games").doc(lobbyName).collection("users").doc(userData.userName);
 
         // Add each user to the game's users subcollection
@@ -525,9 +496,18 @@ function startGame() {
         }).then(() => {
           console.log(`User "${userData.userName}" added to game "${lobbyName}".`);
 
-          // Redirect the current user to the game page
+          // Save game info to localStorage for the current user
           if (userData.userName === userName) {
-            window.location.href = "./flagle/flagle.html"; // Replace with the actual game page URL
+            localStorage.setItem("gameInfo", JSON.stringify({
+              lobbyName: lobbyName,
+              players: players,
+              createdAt: new Date().toISOString(),
+            }));
+
+            leaveLobby();
+
+            // Redirect the current user to the game page
+            window.location.href = "./flagle/tourney/flagleT.html"; // Replace with the actual game page URL
           }
         }).catch((error) => {
           console.error(`Error adding user "${userData.userName}" to game:`, error);
@@ -557,7 +537,29 @@ function listenForGameStart() {
       const gameData = doc.data();
       if (gameData.gameStarted) {
         console.log(`Game started for lobby "${lobbyName}". Redirecting to game page.`);
-        window.location.href = "./flagle/flagle.html"; // Replace with the actual game page URL
+
+        // Save game info to localStorage
+        const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
+        usersRef.get().then((querySnapshot) => {
+          const players = [];
+          querySnapshot.forEach((userDoc) => {
+            const userData = userDoc.data();
+            players.push(userData.userName);
+          });
+
+          localStorage.setItem("gameInfo", JSON.stringify({
+            lobbyName: lobbyName,
+            players: players,
+            createdAt: gameData.createdAt.toDate().toISOString(),
+          }));
+
+          leaveLobby();
+
+          // Redirect the user to the game page
+          window.location.href = "./flagle/tourney/flagleT.html"; // Replace with the actual game page URL
+        }).catch((error) => {
+          console.error("Error retrieving users for game info:", error);
+        });
       }
     } else {
       console.error("Game document does not exist.");
@@ -565,5 +567,3 @@ function listenForGameStart() {
   });
 }
 
-// Call this function when the user joins a lobby
-listenForGameStart();

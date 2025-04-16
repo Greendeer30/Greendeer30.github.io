@@ -52,3 +52,40 @@ async function insertUsername(userId) {
     console.error("Error fetching username:", error);
   }
 }
+
+
+
+function leaveLobby() {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+  const userName = localStorage.getItem("userName");
+
+  if (!lobbyName || !userName) {
+    console.error("Lobby name or user name is missing.");
+    return;
+  }
+
+  const userRef = db.collection("lobbies").doc(lobbyName).collection("users").doc(userName);
+
+  // Remove the user from the lobby's users subcollection
+  userRef.delete()
+    .then(() => {
+      console.log(`User "${userName}" has left the lobby "${lobbyName}".`);
+      sessionStorage.removeItem("lobbyName"); // Clear the lobby name from sessionStorage
+      inLobby = false; // Update the inLobby state
+
+      // Reset the UI to the default state
+      document.getElementById("lobby-interface").style.display = "block";
+      document.getElementById("lobby-interface2").style.display = "none";
+      document.getElementById("lobby-title").innerHTML = "";
+      document.getElementById("lobby-users").innerHTML = "";
+
+      // Optionally refresh the lobby list
+      displayLobbies();
+
+      // Check and remove empty lobbies
+      removeEmptyLobbies();
+    })
+    .catch((error) => {
+      console.error("Error leaving the lobby:", error);
+    });
+}

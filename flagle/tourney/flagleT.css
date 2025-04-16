@@ -1,0 +1,200 @@
+html {
+  height: 100%;
+  width: 100%;
+  background: #333;
+}
+
+body {
+  margin: 0;
+  font-family: monospace;
+  align-items: center;
+}
+.top-bar {
+  width: 100%;
+  background-color: #111;
+  color: white;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  text-align: center;
+  font-family: monospace;
+  font-weight: bold;
+  font-size: 50px;
+  top: 0;
+  left: 0;
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.2);
+}
+.content {
+  padding-top: 10px;
+  color: #fff;
+  font-size: 25px;
+  text-align: center;
+  font-family: monospace;
+}
+
+img {
+  
+  display: block;
+  height: 200px;
+  width: auto;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+}
+
+button {
+
+  position: relative;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+
+}
+
+.container {
+  position: relative;
+  display: inline-block;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.overlay div {
+  background-color: rgba(20, 20, 20);
+  cursor: pointer
+}
+
+
+
+
+
+
+
+
+.autocomplete-container {
+  position: relative;
+  width: 250px;
+  display: none;
+}
+input {
+  width: 100%;
+  padding: 12px;
+  padding-left: 30px;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid #ccc;
+  border-top: none;
+  background: white;
+  max-height: 150px;
+  overflow-y: auto;
+  display: none;
+}
+.autocomplete-list div {
+  padding: 8px;
+  cursor: pointer;
+}
+.autocomplete-list div:hover {
+  background-color: #aaa;
+}
+
+placeholder {
+  font-family: monospace;
+  text-align: center;
+}
+
+
+
+
+.score-box {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 250px;
+}
+.score-box h2 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+.stat {
+  font-size: 18px;
+  margin: 5px 0;
+}
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  color: #d9534f;
+}
+
+
+
+
+.banner {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff9800;
+  color: white;
+  padding: 15px 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border-radius: 5px;
+  transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+.banner.show {
+  top: 120px;
+  opacity: 1;
+  visibility: visible;
+}
+
+#topBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.5); /* translucent */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding: 0 20px;
+  font-family: sans-serif;
+  z-index: 999;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-size: 20px;
+}
+
+#homeButton {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#homeButton:hover {
+  text-decoration: underline;
+}
+
+#lobbyName {
+  font-style: italic;
+  opacity: 0.9;
+}
