@@ -121,7 +121,7 @@ function newLobbyScreen() {
   document.getElementById("lobbyInput").value = "";
   document.getElementById("lobby-interface").style.display = "none";
   document.getElementById("lobby-interface2").style.display = "block";
-  document.getElementById("lobby-title").innerHTML = "<em>Lobby: </em><strong>" + sessionStorage.getItem("lobbyName") + "</strong>";
+  document.getElementById("lobby-title").innerHTML = `<em>Lobby: </em><strong>${sessionStorage.getItem("lobbyName")}</strong>`;
 }
 
 function saveLobby(lobbyName) {
@@ -131,7 +131,7 @@ function saveLobby(lobbyName) {
     return;
   }
 
-  sessionStorage.setItem("lobbyName", lobbyName);
+  sessionStorage.setItem("lobbyName", value);
 
   const lobbyRef = db.collection("lobbies").doc(value);
 
@@ -352,6 +352,7 @@ db.collection("lobbies").get().then((querySnapshot) => {
 setInterval(() => {
   const lobbyName = sessionStorage.getItem("lobbyName");
   const userName = localStorage.getItem("userName");
+  console.log(lobbyName);
   if (lobbyName && userName) {
     updateLastActive(lobbyName, userName);
   }
