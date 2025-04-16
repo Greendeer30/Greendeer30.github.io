@@ -489,3 +489,81 @@ removeEmptyLobbies();
 setInterval(() => {
   removeEmptyLobbies();
 }, 60000); // Every minute
+
+
+function startGame() {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+  const userName = localStorage.getItem("userName");
+
+  if (!lobbyName || !userName) {
+    console.error("Lobby name or user name is missing.");
+    return;
+  }
+
+  const gameRef = db.collection("games").doc(lobbyName);
+
+  // Create or update the game document for the lobby
+  gameRef.set({
+    lobbyName: lobbyName,
+    createdAt: firebase.firestore.Timestamp.now(),
+    lastUpdated: firebase.firestore.Timestamp.now(),
+    gameStarted: true, // Indicate that the game has started
+  }).then(() => {
+    console.log(`Game started for lobby "${lobbyName}".`);
+
+    // Retrieve all users in the lobby
+    const usersRef = db.collection("lobbies").doc(lobbyName).collection("users");
+    usersRef.get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const userData = doc.data();
+        const userDocRef = db.collection("games").doc(lobbyName).collection("users").doc(userData.userName);
+
+        // Add each user to the game's users subcollection
+        userDocRef.set({
+          userName: userData.userName,
+          lastActive: firebase.firestore.Timestamp.now(),
+        }).then(() => {
+          console.log(`User "${userData.userName}" added to game "${lobbyName}".`);
+
+          // Redirect the current user to the game page
+          if (userData.userName === userName) {
+            window.location.href = "./flagle/flagle.html"; // Replace with the actual game page URL
+          }
+        }).catch((error) => {
+          console.error(`Error adding user "${userData.userName}" to game:`, error);
+        });
+      });
+    }).catch((error) => {
+      console.error("Error retrieving users from lobby:", error);
+    });
+  }).catch((error) => {
+    console.error("Error starting game:", error);
+  });
+}
+
+function listenForGameStart() {
+  const lobbyName = sessionStorage.getItem("lobbyName");
+
+  if (!lobbyName) {
+    console.error("Lobby name is missing.");
+    return;
+  }
+
+  const gameRef = db.collection("games").doc(lobbyName);
+
+  // Listen for changes to the game document
+  gameRef.onSnapshot((doc) => {
+    if (doc.exists) {
+      const gameData = doc.data();
+      if (gameData.gameStarted) {
+        console.log(`Game started for lobby "${lobbyName}". Redirecting to game page.`);
+        window.location.href = "./flagle/flagle.html"; // Replace with the actual game page URL
+      }
+    } else {
+      console.error("Game document does not exist.");
+    }
+  });
+}
+
+// Call this function when the user joins a lobby
+listenForGameStart();
