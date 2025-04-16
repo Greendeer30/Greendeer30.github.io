@@ -5,6 +5,8 @@ if(userName == null) {
 
 const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
 
+document.getElementById("timer").textContent = gameInfo.gameTime;
+
 if (!gameInfo || !gameInfo.createdAt) {
   console.error("Game info or creation time is missing.");
   // Redirect to the main page if game info is missing
@@ -106,7 +108,7 @@ var completed = false;
 
 let correctGuesses = 0;
 let totalGuesses = 0;
-let timeLeft = 180; // 3 minutes in seconds
+let timeLeft = gameInfo.gameTime2; // 3 minutes in seconds
 let timerRunning = false;
 let countdown;
 
@@ -324,17 +326,105 @@ function updateDisplay() {
 }
 
 async function addLeader() {
-    await db.collection("leaderboard").add({
-        user: localStorage.getItem("userName"),
-        points: correctGuesses,
-        uid: auth.currentUser.uid
-    })
-        .then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
+  const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
+  const lobbyName = gameInfo?.lobbyName;
+  const userName = localStorage.getItem("userName");
+
+  if (!lobbyName || !userName) {
+    console.error("Lobby name or user name is missing.");
+    return;
+  }
+
+  try {
+    // Add the player's score to the leaderboard subcollection
+    await db.collection("games").doc(lobbyName).collection("leaderboard").doc(userName).set({
+      user: userName,
+      points: correctGuesses, // Replace with the actual points variable
+      lastUpdated: firebase.firestore.Timestamp.now(),
+    });
+    console.log(`Player "${userName}" added to the leaderboard for game "${lobbyName}".`);
+  } catch (error) {
+    console.error("Error adding player to leaderboard:", error);
+  }
+}
+
+async function showLeaderboard() {
+  const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
+  const lobbyName = gameInfo?.lobbyName;
+
+  if (!lobbyName) {
+    console.error("Lobby name is missing.");
+    return;
+  }
+
+  try {
+    // Retrieve leaderboard data from the game's leaderboard subcollection
+    const snapshot = await db
+      .collection("games")
+      .doc(lobbyName)
+      .collection("leaderboard")
+      .orderBy("points", "desc")
+      .limit(10)
+      .get();
+
+    // Clear existing leaderboard entries
+    const leaderboardDiv = document.querySelector(".leaderboard");
+    leaderboardDiv.innerHTML = `
+      <div class="leaderboard-header">🏆 Leaderboard</div>
+    `;
+
+    let rank = 1;
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      // Create a new leaderboard entry
+      const entry = document.createElement("div");
+      entry.classList.add("leaderboard-entry");
+      if (rank === 1) entry.classList.add("top-entry"); // Highlight the top entry
+      entry.innerHTML = `
+        <span class="rank">${rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : rank}</span>
+        <span class="name">${data.user}</span>
+        <span class="points">${data.points}</span>
+      `;
+      leaderboardDiv.appendChild(entry);
+      rank++;
+    });
+
+    // Add a "Play Again" button
+    const playAgainButton = document.createElement("center");
+    playAgainButton.innerHTML = `<button onclick="restartGame()">Play Again</button>`;
+    leaderboardDiv.appendChild(playAgainButton);
+
+    // Show the leaderboard
+    leaderboardDiv.style.display = "block";
+    document.getElementById("guessContainer").style.display = "none"; // Hide the game container
+  } catch (error) {
+    console.error("Error retrieving leaderboard data:", error);
+  }
+}
+
+async function cleanupGame() {
+  const gameInfo = JSON.parse(localStorage.getItem("gameInfo"));
+  const lobbyName = gameInfo?.lobbyName;
+
+  if (!lobbyName) {
+    console.error("Lobby name is missing.");
+    return;
+  }
+
+  try {
+    // Delete all documents in the leaderboard subcollection
+    const leaderboardRef = db.collection("games").doc(lobbyName).collection("leaderboard");
+    const snapshot = await leaderboardRef.get();
+    const deletePromises = snapshot.docs.map((doc) => doc.ref.delete());
+    await Promise.all(deletePromises);
+
+    // Delete the game document
+    await db.collection("games").doc(lobbyName).delete();
+    console.log(`Game "${lobbyName}" and its leaderboard have been deleted.`);
+  } catch (error) {
+    console.error("Error cleaning up game:", error);
+  }
 }
 
 function startTimer() {
@@ -360,6 +450,7 @@ function startTimer() {
             document.getElementById("guessContainer").style.display = "none";
 
             addLeader();
+            showLeaderboard();
 
             timerRunning = false;
         }
@@ -370,18 +461,11 @@ function startTimer() {
 
 function resetTimer() {
     clearInterval(countdown);
-    timeLeft = 1; // Reset to 3 minutes
-    document.getElementById("timer").textContent = "3:00";
+    timeLeft = gameInfo.gameTime; // Reset to 3 minutes
     timerRunning = false;
     document.getElementById("guessContainer").style.display = "none";
 
 }
-
-
-
-
-
-
 
 
 function showBanner(message, isCorrect) {

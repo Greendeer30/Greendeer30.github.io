@@ -494,7 +494,6 @@ function listenForGameStart() {
   }
 
   const gameRef = db.collection("games").doc(lobbyName);
-
   // Listen for changes to the game document
   gameRef.onSnapshot((doc) => {
     if (doc.exists) {
@@ -504,7 +503,9 @@ function listenForGameStart() {
 
         localStorage.setItem("gameInfo", JSON.stringify({
           lobbyName: lobbyName,
-          createdAt: gameData.createdAt.toDate().toISOString()
+          createdAt: gameData.createdAt.toDate().toISOString(),
+          gameTime: document.getElementById("time-value").textContent,
+          gameTime2: document.getElementById("time-slider").value
         }));
 
           //leaveLobby();
@@ -517,5 +518,14 @@ function listenForGameStart() {
       console.error("Game document does not exist.");
     }
   });
+}
+
+function updateTimeValue(value) {
+  var seconds = Math.floor(value % 60);
+  if(seconds < 10){
+    seconds = "0" + seconds;
+  }
+  var minutes = Math.floor((value / 60));
+  document.getElementById("time-value").textContent = minutes + ":" + seconds;
 }
 

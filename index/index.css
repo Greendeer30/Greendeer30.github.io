@@ -539,3 +539,80 @@ input[type="text"] {
   box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
   /* Add a glow effect */
 }
+
+/* Style the slider container */
+#lobby-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Style the slider label */
+#lobby-actions label {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Style the slider */
+#time-slider {
+  -webkit-appearance: none; /* Remove default styling */
+  appearance: none;
+  width: 100%; /* Full width */
+  height: 10px; /* Height of the slider track */
+  background: linear-gradient(90deg, #4caf50, #2196f3); /* Gradient track */
+  border-radius: 5px; /* Rounded edges */
+  outline: none; /* Remove focus outline */
+  transition: background 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+/* Style the slider thumb */
+#time-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Remove default styling */
+  appearance: none;
+  width: 20px; /* Width of the thumb */
+  height: 20px; /* Height of the thumb */
+  background: #ff5722; /* Thumb color */
+  border-radius: 50%; /* Circular thumb */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Add shadow */
+  cursor: pointer; /* Pointer cursor */
+  transition: transform 0.2s ease-in-out;
+}
+
+#time-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ff5722;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Add hover effect for the thumb */
+#time-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2); /* Slightly enlarge on hover */
+}
+
+#time-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Add focus effect for the thumb */
+#time-slider::-webkit-slider-thumb:focus {
+  transform: scale(1.2); /* Slightly enlarge on focus */
+}
+
+#time-slider::-moz-range-thumb:focus {
+  transform: scale(1.2);
+}
+
+/* Style the time value display */
+#time-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #4caf50;
+  margin-top: 5px;
+}

@@ -54,7 +54,12 @@
     <p class="stat">Correct Guesses: <span id="correctGuesses">0</span></p>
     <p class="stat">Accuracy: <span id="accuracy">0%</span></p>
     <p class="stat timer">Time Left: <span id="timer">3:00</span></p>
-    <p class="stat"><span id="players">0</span></p>
+  </div>
+
+  <div class="leaderboard fade-in" style="display: none;">
+    <div class="leaderboard-header">🏆 Leaderboard</div>
+      <center><button onclick="restartGame()">Play Again</button></center>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore-compat.js"></script>

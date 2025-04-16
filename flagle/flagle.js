@@ -325,7 +325,7 @@ function startTimer() {
 
 function resetTimer() {
     clearInterval(countdown);
-    timeLeft = 1; // Reset to 3 minutes
+    timeLeft = 180; // Reset to 3 minutes
     document.getElementById("timer").textContent = "3:00";
     timerRunning = false;
     document.getElementById("guessContainer").style.display = "none";

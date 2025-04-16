@@ -40,7 +40,7 @@
         </div>
 
         <div class="leaderboard fade-in">
-          <div class="leaderboard-header">🏆 Flagle Leaderboard</div>
+          <div class="leaderboard-header">🏆 Flagle Leaderboard (3 minute)</div>
           <div class="leaderboard-entry top-entry">
             <span class="rank">🥇</span>
             <span class="name" id="u1"></span>
@@ -82,10 +82,23 @@
           </center>
 
           <div id="lobby-users"></div>
+
           <div id="lobby-actions">
+            <label for="time-slider">Game Time: <span id="time-value">3:00</span></label>
+            <input
+              type="range"
+              id="time-slider"
+              min="30"
+              max="300"
+              step="10"
+              value="180"
+              oninput="updateTimeValue(this.value)"
+            />
+            <br>
             <button id="start-game" class="long" onclick="startGame()">Start Game</button>
             <button id="leave-lobby" class="long" onclick="leaveLobby()">Leave Lobby</button>
           </div>
+
         </div>
       </div>
     </div>
