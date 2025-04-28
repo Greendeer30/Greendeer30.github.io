@@ -21,7 +21,7 @@
     </head>
     
     
-    <body onkeydown="keyPressed(event)" onkeyup="keyReleased(event)" onclick="onClick(event)" onresize="onResize()">
+    <body onkeydown="keyPressed(event)" onkeyup="keyReleased(event)" onresize="onResize()">
     
     <p>don't look</p>
 
@@ -334,17 +334,9 @@ if(localStorage.getItem('currentDay') === null){
     localStorage.setItem('currentDay', String(now.getFullYear() * 768 + day));
 }
 
-console.log(currentDay);
 var currentDay = JSON.parse(localStorage.getItem('currentDay'));
 
 scene = 'help';
-console.log(currentDay);
-console.log((localStorage.getItem('currentDay')));
-console.log(now.getFullYear() * 768 + day);
-console.log(parseInt(currentDay) !== (now.getFullYear() * 768 + day));
-console.log(localStorage.getItem('current'));
-console.log(localStorage.getItem('currentLetter'));
-console.log(localStorage.getItem('typed'));
 if(parseInt(currentDay) !== (now.getFullYear() * 768 + day)){
     localStorage.setItem('currentDay', String(now.getFullYear() * 768 + day)); 
     
