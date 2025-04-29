@@ -219,7 +219,6 @@ Mouse = {
 var key_press = false;
 var key_code = false;
 canvas.addEventListener("mousemove", function(e) {
-    console.log(e)
     mouseX = e.offsetX;
     mouseY = e.offsetY;
 });
@@ -331,10 +330,12 @@ var set_word = Math.floor(rand() * (words.length - 1));
 
 //localStorage.clear();
 
+console.log(currentDay);
 var currentDay = (localStorage.getItem('currentDay') === null ? String(now.getFullYear() * 768 + day) : JSON.parse(localStorage.getItem('currentDay')));
 
 scene = 'help';
 console.log(currentDay);
+console.log((localStorage.getItem('currentDay')));
 console.log(now.getFullYear() * 768 + day);
 console.log(parseInt(currentDay) !== (now.getFullYear() * 768 + day));
 console.log(localStorage.getItem('current'));
